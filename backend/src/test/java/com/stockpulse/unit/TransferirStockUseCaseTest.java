@@ -90,10 +90,10 @@ class TransferirStockUseCaseTest {
 
         // Assert
         assertNotNull(result);
-        assertEquals(40, result.getStockOrigenRestante());
-        assertEquals(15, result.getStockDestinoActual());
-        assertEquals(10, result.getCantidad());
-        assertEquals(productoId, result.getProductoId());
+        assertEquals(40, result.stockOrigenRestante());
+        assertEquals(15, result.stockDestinoActual());
+        assertEquals(10, result.cantidad());
+        assertEquals(productoId, result.productoId());
 
         verify(stockRepository).save(stockOrigen);
         verify(stockRepository).save(stockDestino);

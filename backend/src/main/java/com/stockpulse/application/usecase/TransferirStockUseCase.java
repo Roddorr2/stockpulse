@@ -27,44 +27,44 @@ public class TransferirStockUseCase {
     }
 
     public TransferenciaStockResponseDTO ejecutar(TransferirStockRequestDTO request) {
-        if (request.getSucursalOrigenId().equals(request.getSucursalDestinoId())) {
+        if (request.sucursalOrigenId().equals(request.sucursalDestinoId())) {
             throw new SameBranchTransferException("La sucursal de origen y destino no pueden ser iguales");
         }
 
-        productoRepository.findById(request.getProductoId())
+        productoRepository.findById(request.productoId())
             .orElseThrow(() -> new ResourceNotFoundException(
-                "Producto no encontrado con ID: " + request.getProductoId()));
+                "Producto no encontrado con ID: " + request.productoId()));
 
         Stock stockOrigen = stockRepository.findByProductoIdAndSucursalId(
-            request.getProductoId(), request.getSucursalOrigenId())
+            request.productoId(), request.sucursalOrigenId())
             .orElseThrow(() -> new ResourceNotFoundException(
                 String.format("No existe registro de stock para el producto %s en la sucursal origen %s",
-                    request.getProductoId(), request.getSucursalOrigenId())));
+                    request.productoId(), request.sucursalOrigenId())));
 
         Stock stockDestino = stockRepository.findByProductoIdAndSucursalId(
-            request.getProductoId(), request.getSucursalDestinoId())
+            request.productoId(), request.sucursalDestinoId())
             .orElseGet(() -> new Stock(
                 UUID.randomUUID(),
-                request.getProductoId(),
-                request.getSucursalDestinoId(),
+                request.productoId(),
+                request.sucursalDestinoId(),
                 0,
                 null
             ));
 
-        stockOrigen.disminuirStock(request.getCantidad());
-        stockDestino.aumentarStock(request.getCantidad());
+        stockOrigen.disminuirStock(request.cantidad());
+        stockDestino.aumentarStock(request.cantidad());
 
         Stock stockOrigenGuardado = stockRepository.save(stockOrigen);
         Stock stockDestinoGuardado = stockRepository.save(stockDestino);
 
         TransferenciaStock transferencia = new TransferenciaStock(
             UUID.randomUUID(),
-            request.getProductoId(),
-            request.getSucursalOrigenId(),
-            request.getSucursalDestinoId(),
-            request.getCantidad(),
+            request.productoId(),
+            request.sucursalOrigenId(),
+            request.sucursalDestinoId(),
+            request.cantidad(),
             LocalDateTime.now(),
-            request.getUsuarioId()
+            request.usuarioId()
         );
 
         TransferenciaStock transferenciaGuardada = transferenciaStockRepository.save(transferencia);
