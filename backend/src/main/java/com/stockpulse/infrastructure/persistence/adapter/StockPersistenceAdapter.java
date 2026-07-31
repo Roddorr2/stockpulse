@@ -1,10 +1,12 @@
 package com.stockpulse.infrastructure.persistence.adapter;
 
+import com.stockpulse.application.dto.StockResponseDTO;
 import com.stockpulse.domain.model.Stock;
 import com.stockpulse.domain.repository.StockRepository;
 import com.stockpulse.infrastructure.persistence.entity.StockJpaEntity;
 import com.stockpulse.infrastructure.persistence.mapper.StockPersistenceMapper;
 import com.stockpulse.infrastructure.persistence.repository.SpringDataStockRepository;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.stereotype.Component;
@@ -31,6 +33,11 @@ public class StockPersistenceAdapter implements StockRepository {
         StockJpaEntity entity = mapper.toEntity(stock);
         StockJpaEntity savedEntity = repository.save(entity);
         return mapper.toDomain(savedEntity);
+    }
+
+    @Override
+    public List<StockResponseDTO> findAllWithDetails() {
+        return repository.findAllWithDetails();
     }
 
 }

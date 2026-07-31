@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, ArrowRightLeft, CheckCircle2, ShieldAlert } from 'lucide-react';
 
 interface StockTransferModalProps {
@@ -9,16 +9,54 @@ interface StockTransferModalProps {
   onSuccess: () => void;
 }
 
+interface ProductItem {
+  id: string;
+  sku: string;
+  nombre: string;
+}
+
+interface BranchItem {
+  id: string;
+  nombre: string;
+}
+
 export function StockTransferModal({ isOpen, onClose, onSuccess }: StockTransferModalProps) {
-  const [productoId, setProductoId] = useState('a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d');
-  const [sucursalOrigenId, setSucursalOrigenId] = useState('11111111-1111-1111-1111-111111111111');
-  const [sucursalDestinoId, setSucursalDestinoId] = useState('22222222-2222-2222-2222-222222222222');
+  const [productos, setProductos] = useState<ProductItem[]>([]);
+  const [sucursales, setSucursales] = useState<BranchItem[]>([]);
+
+  const [productoId, setProductoId] = useState('');
+  const [sucursalOrigenId, setSucursalOrigenId] = useState('');
+  const [sucursalDestinoId, setSucursalDestinoId] = useState('');
   const [cantidad, setCantidad] = useState(5);
-  const [usuarioId, setUsuarioId] = useState('99999999-9999-9999-9999-999999999999');
+  const [usuarioId] = useState('bbbb2222-bbbb-2222-bbbb-222222222222');
 
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      // Cargar productos y sucursales reales de la base de datos
+      fetch('http://localhost:8080/api/v1/products')
+        .then((res) => res.ok ? res.json() : [])
+        .then((data: ProductItem[]) => {
+          setProductos(data);
+          if (data.length > 0) setProductoId(data[0].id);
+        })
+        .catch(() => {});
+
+      fetch('http://localhost:8080/api/v1/branches')
+        .then((res) => res.ok ? res.json() : [])
+        .then((data: BranchItem[]) => {
+          setSucursales(data);
+          if (data.length > 1) {
+            setSucursalOrigenId(data[0].id);
+            setSucursalDestinoId(data[1].id);
+          }
+        })
+        .catch(() => {});
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -105,37 +143,83 @@ export function StockTransferModal({ isOpen, onClose, onSuccess }: StockTransfer
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">ID Producto (UUID)</label>
-            <input
-              type="text"
-              value={productoId}
-              onChange={(e) => setProductoId(e.target.value)}
-              required
-              className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs font-mono text-slate-200 focus:outline-none focus:border-blue-500"
-            />
+            <label className="block text-xs font-semibold text-slate-300 mb-1">Producto a Transferir</label>
+            {productos.length > 0 ? (
+              <select
+                value={productoId}
+                onChange={(e) => setProductoId(e.target.value)}
+                required
+                className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs font-medium text-slate-200 focus:outline-none focus:border-blue-500"
+              >
+                {productos.map((prod) => (
+                  <option key={prod.id} value={prod.id}>
+                    {prod.nombre} ({prod.sku})
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <input
+                type="text"
+                value={productoId}
+                onChange={(e) => setProductoId(e.target.value)}
+                placeholder="ID Producto (UUID)"
+                required
+                className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs font-mono text-slate-200 focus:outline-none focus:border-blue-500"
+              />
+            )}
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-semibold text-slate-300 mb-1">Sucursal Origen</label>
-              <input
-                type="text"
-                value={sucursalOrigenId}
-                onChange={(e) => setSucursalOrigenId(e.target.value)}
-                required
-                className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs font-mono text-slate-200 focus:outline-none focus:border-blue-500"
-              />
+              {sucursales.length > 0 ? (
+                <select
+                  value={sucursalOrigenId}
+                  onChange={(e) => setSucursalOrigenId(e.target.value)}
+                  required
+                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs font-medium text-slate-200 focus:outline-none focus:border-blue-500"
+                >
+                  {sucursales.map((suc) => (
+                    <option key={suc.id} value={suc.id}>
+                      {suc.nombre}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <input
+                  type="text"
+                  value={sucursalOrigenId}
+                  onChange={(e) => setSucursalOrigenId(e.target.value)}
+                  required
+                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs font-mono text-slate-200 focus:outline-none focus:border-blue-500"
+                />
+              )}
             </div>
 
             <div>
               <label className="block text-xs font-semibold text-slate-300 mb-1">Sucursal Destino</label>
-              <input
-                type="text"
-                value={sucursalDestinoId}
-                onChange={(e) => setSucursalDestinoId(e.target.value)}
-                required
-                className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs font-mono text-slate-200 focus:outline-none focus:border-blue-500"
-              />
+              {sucursales.length > 0 ? (
+                <select
+                  value={sucursalDestinoId}
+                  onChange={(e) => setSucursalDestinoId(e.target.value)}
+                  required
+                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs font-medium text-slate-200 focus:outline-none focus:border-blue-500"
+                >
+                  {sucursales.map((suc) => (
+                    <option key={suc.id} value={suc.id}>
+                      {suc.nombre}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <input
+                  type="text"
+                  value={sucursalDestinoId}
+                  onChange={(e) => setSucursalDestinoId(e.target.value)}
+                  required
+                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs font-mono text-slate-200 focus:outline-none focus:border-blue-500"
+                />
+              )}
             </div>
           </div>
 
@@ -153,13 +237,12 @@ export function StockTransferModal({ isOpen, onClose, onSuccess }: StockTransfer
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">ID Usuario Operador</label>
+              <label className="block text-xs font-semibold text-slate-300 mb-1">ID Operador</label>
               <input
                 type="text"
                 value={usuarioId}
-                onChange={(e) => setUsuarioId(e.target.value)}
-                required
-                className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs font-mono text-slate-200 focus:outline-none focus:border-blue-500"
+                disabled
+                className="w-full px-3 py-2 bg-slate-950/60 border border-slate-800/80 rounded-lg text-xs font-mono text-slate-400 cursor-not-allowed"
               />
             </div>
           </div>

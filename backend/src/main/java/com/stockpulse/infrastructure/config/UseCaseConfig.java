@@ -1,5 +1,6 @@
 package com.stockpulse.infrastructure.config;
 
+import com.stockpulse.application.usecase.ObtenerMatrizStockUseCase;
 import com.stockpulse.application.usecase.TransferirStockUseCase;
 import com.stockpulse.domain.event.DomainEventPublisher;
 import com.stockpulse.domain.repository.ProductoRepository;
@@ -18,6 +19,11 @@ public class UseCaseConfig {
                                                            DomainEventPublisher eventPublisher) {
         return new TransferirStockUseCase(stockRepository, productoRepository,
             transferenciaStockRepository, eventPublisher);
+    }
+
+    @Bean
+    public ObtenerMatrizStockUseCase obtenerMatrizStockUseCase(StockRepository stockRepository) {
+        return new ObtenerMatrizStockUseCase(stockRepository);
     }
 
 }
