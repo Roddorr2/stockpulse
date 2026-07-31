@@ -15,6 +15,8 @@ export interface LowStockAlert {
   timestamp: string;
 }
 
+const WS_BASE_URL = process.env.NEXT_PUBLIC_WS_BASE_URL || 'http://localhost:8080/ws-stockpulse';
+
 export function useStockAlertsWS() {
   const [alerts, setAlerts] = useState<LowStockAlert[]>([]);
   const [isConnected, setIsConnected] = useState<boolean>(false);
@@ -25,7 +27,7 @@ export function useStockAlertsWS() {
   }, []);
 
   useEffect(() => {
-    const socketFactory = () => new SockJS('http://localhost:8080/ws-stockpulse');
+    const socketFactory = () => new SockJS(WS_BASE_URL);
 
     const client = new Client({
       webSocketFactory: socketFactory,

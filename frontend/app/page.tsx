@@ -20,6 +20,8 @@ export interface StockDTO {
   version: number;
 }
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8080';
+
 export default function Home() {
   const { alerts, isConnected, dismissAlert } = useStockAlertsWS();
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
@@ -31,14 +33,14 @@ export default function Home() {
     setLoading(true);
     setApiError(null);
     try {
-      const response = await fetch('http://localhost:8080/api/v1/stock');
+      const response = await fetch(`${API_BASE_URL}/api/v1/stock`);
       if (!response.ok) {
         throw new Error(`Error HTTP ${response.status}`);
       }
       const data: StockDTO[] = await response.json();
       setStocks(data);
-    } catch (err: any) {
-      setApiError('No se pudo cargar la matriz de stock desde el servidor Backend (PostgreSQL)');
+    } catch {
+      setApiError(`No se pudo cargar la matriz de stock desde el servidor Backend (${API_BASE_URL})`);
       setStocks([]);
     } finally {
       setLoading(false);

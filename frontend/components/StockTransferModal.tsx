@@ -20,6 +20,8 @@ interface BranchItem {
   nombre: string;
 }
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8080';
+
 export function StockTransferModal({ isOpen, onClose, onSuccess }: StockTransferModalProps) {
   const [productos, setProductos] = useState<ProductItem[]>([]);
   const [sucursales, setSucursales] = useState<BranchItem[]>([]);
@@ -37,7 +39,7 @@ export function StockTransferModal({ isOpen, onClose, onSuccess }: StockTransfer
   useEffect(() => {
     if (isOpen) {
       // Cargar productos y sucursales reales de la base de datos
-      fetch('http://localhost:8080/api/v1/products')
+      fetch(`${API_BASE_URL}/api/v1/products`)
         .then((res) => res.ok ? res.json() : [])
         .then((data: ProductItem[]) => {
           setProductos(data);
@@ -45,7 +47,7 @@ export function StockTransferModal({ isOpen, onClose, onSuccess }: StockTransfer
         })
         .catch(() => {});
 
-      fetch('http://localhost:8080/api/v1/branches')
+      fetch(`${API_BASE_URL}/api/v1/branches`)
         .then((res) => res.ok ? res.json() : [])
         .then((data: BranchItem[]) => {
           setSucursales(data);
@@ -67,7 +69,7 @@ export function StockTransferModal({ isOpen, onClose, onSuccess }: StockTransfer
     setSuccessMsg(null);
 
     try {
-      const response = await fetch('http://localhost:8080/api/v1/stock/transfer', {
+      const response = await fetch(`${API_BASE_URL}/api/v1/stock/transfer`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -92,12 +94,12 @@ export function StockTransferModal({ isOpen, onClose, onSuccess }: StockTransfer
           onClose();
         }, 1800);
       } else if (response.status === 409) {
-        setErrorMsg('⚡ CONFLICTO DE CONCURRENCIA (@Version): El stock fue modificado por otra transacción en milisegundos. Por favor reintente.');
+        setErrorMsg('CONFLICTO DE CONCURRENCIA (@Version): El stock fue modificado por otra transacción en milisegundos. Por favor reintente.');
       } else {
         setErrorMsg(data.message || 'Error al procesar la transferencia de stock');
       }
     } catch {
-      setErrorMsg('No se pudo conectar con el servidor Backend (http://localhost:8080)');
+      setErrorMsg(`No se pudo conectar con el servidor Backend (${API_BASE_URL})`);
     } finally {
       setLoading(false);
     }
