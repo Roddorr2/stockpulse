@@ -2,8 +2,11 @@ package com.stockpulse.application.usecase;
 
 import com.stockpulse.application.dto.TransferenciaStockResponseDTO;
 import com.stockpulse.application.dto.TransferirStockRequestDTO;
+import com.stockpulse.domain.event.DomainEventPublisher;
+import com.stockpulse.domain.event.LowStockEvent;
 import com.stockpulse.domain.exception.ResourceNotFoundException;
 import com.stockpulse.domain.exception.SameBranchTransferException;
+import com.stockpulse.domain.model.Producto;
 import com.stockpulse.domain.model.Stock;
 import com.stockpulse.domain.model.TransferenciaStock;
 import com.stockpulse.domain.repository.ProductoRepository;
@@ -17,13 +20,16 @@ public class TransferirStockUseCase {
     private final StockRepository stockRepository;
     private final ProductoRepository productoRepository;
     private final TransferenciaStockRepository transferenciaStockRepository;
+    private final DomainEventPublisher eventPublisher;
 
     public TransferirStockUseCase(StockRepository stockRepository,
                                   ProductoRepository productoRepository,
-                                  TransferenciaStockRepository transferenciaStockRepository) {
+                                  TransferenciaStockRepository transferenciaStockRepository,
+                                  DomainEventPublisher eventPublisher) {
         this.stockRepository = stockRepository;
         this.productoRepository = productoRepository;
         this.transferenciaStockRepository = transferenciaStockRepository;
+        this.eventPublisher = eventPublisher;
     }
 
     public TransferenciaStockResponseDTO ejecutar(TransferirStockRequestDTO request) {
@@ -31,7 +37,7 @@ public class TransferirStockUseCase {
             throw new SameBranchTransferException("La sucursal de origen y destino no pueden ser iguales");
         }
 
-        productoRepository.findById(request.productoId())
+        Producto producto = productoRepository.findById(request.productoId())
             .orElseThrow(() -> new ResourceNotFoundException(
                 "Producto no encontrado con ID: " + request.productoId()));
 
@@ -68,6 +74,19 @@ public class TransferirStockUseCase {
         );
 
         TransferenciaStock transferenciaGuardada = transferenciaStockRepository.save(transferencia);
+
+        // Disparar evento de bajo stock si el inventario resultante de origen cae por debajo del umbral mínimo
+        if (stockOrigenGuardado.getCantidad() <= producto.getStockMinimo()) {
+            eventPublisher.publish(new LowStockEvent(
+                producto.getId(),
+                producto.getSku(),
+                producto.getNombre(),
+                stockOrigenGuardado.getSucursalId(),
+                stockOrigenGuardado.getCantidad(),
+                producto.getStockMinimo(),
+                LocalDateTime.now()
+            ));
+        }
 
         return new TransferenciaStockResponseDTO(
             transferenciaGuardada.getId(),
