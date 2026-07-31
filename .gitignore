@@ -1,0 +1,35 @@
+# IDEs and Workspace Metadata
+.metadata/
+.idea/
+.vscode/
+*.swp
+*.swo
+*.tmp
+.classpath
+.project
+.settings/
+
+# Operating System Files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Node / Frontend
+node_modules/
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/.vercel/
+
+# Java / Backend
+backend/target/
+backend/*.log
+*.jar
+*.war
+
+# Logs and Environment
+*.log
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local

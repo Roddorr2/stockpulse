@@ -1,0 +1,15 @@
+{
+  "name": "stockpulse-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "prepare": "husky install",
+    "lint:backend": "cd backend && ./mvnw checkstyle:check",
+    "lint:frontend": "cd frontend && npm run lint",
+    "test:backend": "cd backend && ./mvnw test",
+    "build:frontend": "cd frontend && npm run build"
+  },
+  "devDependencies": {
+    "husky": "^9.0.11"
+  }
+}

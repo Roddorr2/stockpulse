@@ -1,0 +1,6 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+echo "🔍 Running StockPulse Pre-commit Checks..."
+cd backend && ./mvnw checkstyle:check
+cd ../frontend && npm run lint
