@@ -16,6 +16,7 @@ import com.stockpulse.infrastructure.persistence.repository.SpringDataProductoRe
 import com.stockpulse.infrastructure.persistence.repository.SpringDataStockRepository;
 import com.stockpulse.infrastructure.persistence.repository.SpringDataSucursalRepository;
 import com.stockpulse.infrastructure.persistence.repository.SpringDataTransferenciaStockRepository;
+import com.stockpulse.infrastructure.persistence.repository.SpringDataVentaRepository;
 import java.math.BigDecimal;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
@@ -72,6 +73,9 @@ class StockTransferIntegrationTest {
     @Autowired
     private SpringDataTransferenciaStockRepository transferenciaStockRepository;
 
+    @Autowired
+    private SpringDataVentaRepository ventaRepository;
+
     private UUID productoId;
     private UUID sucursalOrigenId;
     private UUID sucursalDestinoId;
@@ -81,6 +85,7 @@ class StockTransferIntegrationTest {
     void setUp() {
         stockRepository.deleteAll();
         transferenciaStockRepository.deleteAll();
+        ventaRepository.deleteAll();
         productoRepository.deleteAll();
         sucursalRepository.deleteAll();
 
