@@ -1,13 +1,17 @@
 package com.stockpulse.infrastructure.config;
 
+import com.stockpulse.application.usecase.CrearUsuarioUseCase;
 import com.stockpulse.application.usecase.ObtenerMatrizStockUseCase;
+import com.stockpulse.application.usecase.ObtenerUsuariosUseCase;
 import com.stockpulse.application.usecase.RegistrarVentaUseCase;
 import com.stockpulse.application.usecase.TransferirStockUseCase;
 import com.stockpulse.domain.event.DomainEventPublisher;
 import com.stockpulse.domain.repository.ProductoRepository;
+import com.stockpulse.domain.repository.RolRepository;
 import com.stockpulse.domain.repository.StockRepository;
 import com.stockpulse.domain.repository.SucursalRepository;
 import com.stockpulse.domain.repository.TransferenciaStockRepository;
+import com.stockpulse.domain.repository.UsuarioRepository;
 import com.stockpulse.domain.repository.VentaRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,6 +42,16 @@ public class UseCaseConfig {
                                                          DomainEventPublisher eventPublisher) {
         return new RegistrarVentaUseCase(stockRepository, productoRepository, sucursalRepository,
             ventaRepository, eventPublisher);
+    }
+
+    @Bean
+    public ObtenerUsuariosUseCase obtenerUsuariosUseCase(UsuarioRepository usuarioRepository) {
+        return new ObtenerUsuariosUseCase(usuarioRepository);
+    }
+
+    @Bean
+    public CrearUsuarioUseCase crearUsuarioUseCase(UsuarioRepository usuarioRepository, RolRepository rolRepository) {
+        return new CrearUsuarioUseCase(usuarioRepository, rolRepository);
     }
 
 }
