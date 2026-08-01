@@ -1,0 +1,31 @@
+package com.stockpulse.application.usecase;
+
+import com.stockpulse.application.dto.CrearUsuarioRequestDTO;
+import com.stockpulse.application.dto.UsuarioResponseDTO;
+import com.stockpulse.domain.model.Usuario;
+import com.stockpulse.domain.repository.UsuarioRepository;
+import java.util.UUID;
+
+public class CrearUsuarioUseCase {
+
+    private final UsuarioRepository usuarioRepository;
+
+    public CrearUsuarioUseCase(UsuarioRepository usuarioRepository) {
+        this.usuarioRepository = usuarioRepository;
+    }
+
+    public UsuarioResponseDTO ejecutar(CrearUsuarioRequestDTO request) {
+        usuarioRepository.findByEmail(request.email()).ifPresent(u -> {
+            throw new IllegalArgumentException("Ya existe un usuario registrado con el email: " + request.email());
+        });
+
+        UUID newId = UUID.randomUUID();
+        String passwordHash = "$2a$10$eACCq7w9E/r18fN4LgVve.hQ0l2Jp3C5d6E7f8G9h0I1J2K3L4M5N6";
+
+        Usuario usuario = new Usuario(newId, request.email(), passwordHash, request.nombre(), request.rolId());
+        Usuario guardado = usuarioRepository.save(usuario);
+
+        return new UsuarioResponseDTO(guardado.getId(), guardado.getEmail(), guardado.getNombre(), guardado.getRolId());
+    }
+
+}
