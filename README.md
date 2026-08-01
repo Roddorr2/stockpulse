@@ -53,8 +53,8 @@ Para especificaciones detalladas del esquema, ver [docs/entities.md](file:///e:/
 | **Estilo Arquitectónico** | Clean / Hexagonal | Aísla el modelo de dominio de Spring; facilita pruebas unitarias puras y mantenibilidad a largo plazo. |
 | **Concurrencia de Stock** | Locking Optimista (`@Version`) | Alta frecuencia de lecturas con baja contención de colisiones simultáneas. |
 | **Alertas de Bajo Stock** | Eventos de Dominio + WebSockets (STOMP) | Desacopla la transacción de la venta de la capa de notificación (principio de responsabilidad única). |
-| **Migraciones de Base de Datos** | Flyway | Gestión del esquema declarativa, auditable e integrada en la tubería de CI/CD. |
-| **Mapeo Objeto-Relacional/DTO** | MapStruct | Desempeño superior en tiempo de compilación y mitigación de errores de mapeo manual. |
+| **Migraciones de Base de Datos** | Flyway (`V1`, `V2`, `V3`) | Gestión del esquema declarativa, auditable con seeders de datos iniciales y operadores (`V3__additional_users_seed.sql`). |
+| **Mapeo Objeto-Relacional/DTO** | MapStruct / Spring Data JPA | Desempeño superior y mitigación de errores de mapeo manual. |
 
 ---
 

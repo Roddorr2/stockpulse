@@ -59,10 +59,15 @@ Escenario: Alerta disparada tras una venta
 ```gherkin
 Escenario: Transferencia exitosa
   Dado que Sucursal 2 tiene 20 unidades del producto "Monitor 24 pulgadas"
-  Cuando el encargado transfiere 5 unidades de Sucursal 2 a Sucursal 1
+  Cuando el encargado selecciona el producto, las sucursales y el operador mediante desplegables dinámicos (<select>) y transfiere 5 unidades de Sucursal 2 a Sucursal 1
   Entonces Sucursal 2 queda con 15 unidades
   Y Sucursal 1 incrementa su stock en 5 unidades
-  Y queda un registro de auditoría con usuario y fecha
+  Y queda un registro de auditoría con el operador seleccionado y la fecha
+
+Escenario: Transferencia rechazada por validaciones en cliente
+  Dado que el encargado abre la modal de transferencia
+  Cuando selecciona la misma sucursal en origen y destino, o especifica una cantidad superior al stock disponible en origen
+  Entonces la interfaz deshabilita la confirmación y muestra una alerta indicando la restricción antes de enviar la petición al backend
 
 Escenario: Transferencia rechazada por stock insuficiente en origen
   Dado que Sucursal 2 tiene solo 3 unidades del producto "Monitor 24 pulgadas"

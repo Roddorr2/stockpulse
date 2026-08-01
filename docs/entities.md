@@ -124,14 +124,18 @@ Registro atómico del movimiento de inventario entre dos sucursales.
 - `usuario_id`: UUID (FK -> Usuario - Encargado/Admin)
 
 ### 7. Usuario
-Usuario autenticado del sistema.
+Usuario autenticado y operador del sistema.
 - `id`: UUID (PK)
 - `email`: String (Único, no nulo)
 - `password_hash`: String (BCrypt)
-- `nombre`: String
+- `nombre`: String (no nulo)
 - `rol_id`: UUID (FK -> Rol)
+- **Persistencia**: Mapeado por `UsuarioJpaEntity` y gestionado mediante `SpringDataUsuarioRepository`.
+- **Endpoint Explicito**: Expuesto en `GET /api/v1/users` para selección dinámica de operadores en transferencias.
+- **Seeder**: Precargado mediante migraciones Flyway `V2__seed_data.sql` y `V3__additional_users_seed.sql`.
 
 ### 8. Rol
 Rol de acceso en el sistema.
 - `id`: UUID (PK)
 - `nombre`: String (`ADMIN`, `ENCARGADO_SUCURSAL`, `CAJERO`)
+
