@@ -103,6 +103,9 @@ Registro de una transacción comercial en una sucursal.
 - `usuario_id`: UUID (FK -> Usuario - Cajero)
 - `fecha`: LocalDateTime (Timestamp)
 - `total`: BigDecimal (>= 0)
+- **Persistencia**: Mapeado por `VentaJpaEntity` y gestionado mediante `VentaPersistenceAdapter` y `SpringDataVentaRepository`.
+- **Endpoint**: Expuesto en `POST /api/v1/sales` a través de `VentaController`.
+- **Seeder**: Precargado mediante migración Flyway `V2__seed_data.sql`.
 
 ### 5. DetalleVenta
 Línea individual dentro de una venta.
@@ -112,6 +115,7 @@ Línea individual dentro de una venta.
 - `cantidad`: int (> 0)
 - `precio_unitario`: BigDecimal (>= 0)
 - `subtotal`: BigDecimal (`cantidad * precio_unitario`)
+- **Persistencia**: Mapeado por `DetalleVentaJpaEntity`.
 
 ### 6. TransferenciaStock
 Registro atómico del movimiento de inventario entre dos sucursales.
@@ -131,11 +135,9 @@ Usuario autenticado y operador del sistema.
 - `nombre`: String (no nulo)
 - `rol_id`: UUID (FK -> Rol)
 - **Persistencia**: Mapeado por `UsuarioJpaEntity` y gestionado mediante `SpringDataUsuarioRepository`.
-- **Endpoint Explicito**: Expuesto en `GET /api/v1/users` para selección dinámica de operadores en transferencias.
-- **Seeder**: Precargado mediante migraciones Flyway `V2__seed_data.sql` y `V3__additional_users_seed.sql`.
+- **Seeder**: Precargado mediante migración Flyway `V2__seed_data.sql`.
 
 ### 8. Rol
 Rol de acceso en el sistema.
 - `id`: UUID (PK)
 - `nombre`: String (`ADMIN`, `ENCARGADO_SUCURSAL`, `CAJERO`)
-

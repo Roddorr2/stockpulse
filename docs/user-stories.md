@@ -4,9 +4,9 @@ Formato: `Como <rol>, quiero <acción>, para <beneficio>`. Criterios de aceptaci
 
 ---
 
-### US-01 — Registrar una venta
+### US-01 — Registrar una venta 🟢 (COMPLETADO)
 **Como** Cajero, **quiero** registrar la venta de uno o más productos, **para** descontar el stock automáticamente y emitir el comprobante.
-**Prioridad:** Must · **Estimación:** 5
+**Prioridad:** Must · **Estimación:** 5 · **Estado:** 🟢 COMPLETADO (`POST /api/v1/sales`)
 
 ```gherkin
 Escenario: Venta exitosa con stock disponible
@@ -18,14 +18,14 @@ Escenario: Venta exitosa con stock disponible
 Escenario: Venta rechazada por stock insuficiente
   Dado que el producto "Mouse Inalámbrico" tiene 1 unidad en Sucursal 1
   Cuando el cajero intenta registrar una venta de 2 unidades
-  Entonces el sistema responde con error 422 y no se modifica el stock
+  Entonces el sistema responde con error 422 Unprocessable Entity y no se modifica el stock
 ```
 
 ---
 
-### US-02 — Prevenir sobreventa en concurrencia
+### US-02 — Prevenir sobreventa en concurrencia 🟢 (COMPLETADO)
 **Como** Administrador, **quiero** que el sistema nunca permita vender más stock del disponible aunque dos cajeros vendan al mismo tiempo, **para** evitar descuadres de inventario.
-**Prioridad:** Must · **Estimación:** 8
+**Prioridad:** Must · **Estimación:** 8 · **Estado:** 🟢 COMPLETADO (`@Version` Optimistic Locking)
 
 ```gherkin
 Escenario: Dos ventas simultáneas sobre el último stock
@@ -38,12 +38,12 @@ Escenario: Dos ventas simultáneas sobre el último stock
 
 ---
 
-### US-03 — Recibir alertas de bajo stock en tiempo real
+### US-03 — Recibir alertas de bajo stock en tiempo real 🟢 (COMPLETADO)
 **Como** Encargado de Sucursal, **quiero** recibir una notificación instantánea cuando el stock de un producto cae bajo el mínimo configurado, **para** poder reabastecer antes de quedarme sin inventario.
-**Prioridad:** Must · **Estimación:** 5
+**Prioridad:** Must · **Estimación:** 5 · **Estado:** 🟢 COMPLETADO (`/topic/stock-alerts/global`)
 
 ```gherkin
-Escenario: Alerta disparada tras una venta
+Escenario: Alerta disparada tras una venta o transferencia
   Dado que el producto "Cable HDMI" tiene stock mínimo configurado en 5
   Y actualmente tiene 6 unidades en Sucursal 1
   Cuando se registra una venta de 2 unidades
@@ -52,9 +52,9 @@ Escenario: Alerta disparada tras una venta
 
 ---
 
-### US-04 — Transferir stock entre sucursales
+### US-04 — Transferir stock entre sucursales 🟢 (COMPLETADO)
 **Como** Encargado de Sucursal, **quiero** transferir stock desde otra sucursal con excedente, **para** cubrir la demanda local sin esperar una nueva compra.
-**Prioridad:** Must · **Estimación:** 5
+**Prioridad:** Must · **Estimación:** 5 · **Estado:** 🟢 COMPLETADO (`POST /api/v1/stock/transfer`)
 
 ```gherkin
 Escenario: Transferencia exitosa
@@ -102,6 +102,6 @@ Escenario: Cajero intenta crear un producto
 
 ---
 
-### US-08 — Ver reporte agregado de stock total
+### US-08 — Ver reporte agregado de stock total 🟢 (COMPLETADO)
 **Como** Administrador, **quiero** ver el stock total de un producto sumado entre todas las sucursales, **para** decidir compras a nivel de cadena.
-**Prioridad:** Could · **Estimación:** 3
+**Prioridad:** Could · **Estimación:** 3 · **Estado:** 🟢 COMPLETADO (`GET /api/v1/stock`)
