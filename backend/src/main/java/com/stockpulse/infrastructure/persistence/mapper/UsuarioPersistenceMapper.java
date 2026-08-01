@@ -7,6 +7,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class UsuarioPersistenceMapper {
 
+    private final RolPersistenceMapper rolMapper;
+
+    public UsuarioPersistenceMapper(RolPersistenceMapper rolMapper) {
+        this.rolMapper = rolMapper;
+    }
+
     public Usuario toDomain(UsuarioJpaEntity entity) {
         if (entity == null) {
             return null;
@@ -16,7 +22,7 @@ public class UsuarioPersistenceMapper {
             entity.getEmail(),
             entity.getPasswordHash(),
             entity.getNombre(),
-            entity.getRolId()
+            rolMapper.toDomain(entity.getRol())
         );
     }
 
@@ -29,7 +35,7 @@ public class UsuarioPersistenceMapper {
             domain.getEmail(),
             domain.getPasswordHash(),
             domain.getNombre(),
-            domain.getRolId()
+            rolMapper.toEntity(domain.getRol())
         );
     }
 
