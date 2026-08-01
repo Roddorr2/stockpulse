@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { X, ArrowRightLeft, CheckCircle2, ShieldAlert } from 'lucide-react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { X, ArrowRightLeft, CheckCircle2, ShieldAlert, AlertTriangle, RefreshCw } from 'lucide-react';
 
 interface StockTransferModalProps {
   isOpen: boolean;
@@ -18,6 +18,19 @@ interface ProductItem {
 interface BranchItem {
   id: string;
   nombre: string;
+  direccion?: string;
+}
+
+interface UserItem {
+  id: string;
+  nombre: string;
+  email: string;
+}
+
+interface StockItem {
+  productoId: string;
+  sucursalId: string;
+  cantidad: number;
 }
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8080';
@@ -25,46 +38,86 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8
 export function StockTransferModal({ isOpen, onClose, onSuccess }: StockTransferModalProps) {
   const [productos, setProductos] = useState<ProductItem[]>([]);
   const [sucursales, setSucursales] = useState<BranchItem[]>([]);
+  const [usuarios, setUsuarios] = useState<UserItem[]>([]);
+  const [stockMatrix, setStockMatrix] = useState<StockItem[]>([]);
 
   const [productoId, setProductoId] = useState('');
   const [sucursalOrigenId, setSucursalOrigenId] = useState('');
   const [sucursalDestinoId, setSucursalDestinoId] = useState('');
-  const [cantidad, setCantidad] = useState(5);
-  const [usuarioId] = useState('bbbb2222-bbbb-2222-bbbb-222222222222');
+  const [usuarioId, setUsuarioId] = useState('');
+  const [cantidad, setCantidad] = useState(1);
 
-  const [loading, setLoading] = useState(false);
+  const [loadingData, setLoadingData] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
   useEffect(() => {
     if (isOpen) {
-      // Cargar productos y sucursales reales de la base de datos
-      fetch(`${API_BASE_URL}/api/v1/products`)
-        .then((res) => res.ok ? res.json() : [])
-        .then((data: ProductItem[]) => {
-          setProductos(data);
-          if (data.length > 0) setProductoId(data[0].id);
-        })
-        .catch(() => {});
+      setLoadingData(true);
+      setErrorMsg(null);
+      setSuccessMsg(null);
 
-      fetch(`${API_BASE_URL}/api/v1/branches`)
-        .then((res) => res.ok ? res.json() : [])
-        .then((data: BranchItem[]) => {
-          setSucursales(data);
-          if (data.length > 1) {
-            setSucursalOrigenId(data[0].id);
-            setSucursalDestinoId(data[1].id);
+      Promise.all([
+        fetch(`${API_BASE_URL}/api/v1/products`).then((res) => (res.ok ? res.json() : [])),
+        fetch(`${API_BASE_URL}/api/v1/branches`).then((res) => (res.ok ? res.json() : [])),
+        fetch(`${API_BASE_URL}/api/v1/users`).then((res) => (res.ok ? res.json() : [])),
+        fetch(`${API_BASE_URL}/api/v1/stock`).then((res) => (res.ok ? res.json() : [])),
+      ])
+        .then(([prodsData, branchesData, usersData, stockData]) => {
+          setProductos(prodsData);
+          setSucursales(branchesData);
+          setUsuarios(usersData);
+          setStockMatrix(stockData);
+
+          if (prodsData.length > 0) setProductoId(prodsData[0].id);
+          if (branchesData.length > 0) setSucursalOrigenId(branchesData[0].id);
+          if (branchesData.length > 1) {
+            setSucursalDestinoId(branchesData[1].id);
+          } else if (branchesData.length > 0) {
+            setSucursalDestinoId(branchesData[0].id);
           }
+          if (usersData.length > 0) setUsuarioId(usersData[0].id);
         })
-        .catch(() => {});
+        .catch(() => {
+          setErrorMsg('Error de comunicación con el backend al cargar el catálogo.');
+        })
+        .finally(() => {
+          setLoadingData(false);
+        });
     }
   }, [isOpen]);
+
+  const stockDisponibleOrigen = useMemo(() => {
+    if (!productoId || !sucursalOrigenId) return null;
+    const match = stockMatrix.find(
+      (s) => s.productoId === productoId && s.sucursalId === sucursalOrigenId
+    );
+    return match ? match.cantidad : 0;
+  }, [stockMatrix, productoId, sucursalOrigenId]);
+
+  const isSameBranch = sucursalOrigenId !== '' && sucursalOrigenId === sucursalDestinoId;
+  const isInvalidQuantity = cantidad <= 0;
+  const isExceedingStock =
+    stockDisponibleOrigen !== null && cantidad > stockDisponibleOrigen;
+
+  const isFormInvalid =
+    !productoId ||
+    !sucursalOrigenId ||
+    !sucursalDestinoId ||
+    !usuarioId ||
+    isSameBranch ||
+    isInvalidQuantity ||
+    isExceedingStock ||
+    submitting;
 
   if (!isOpen) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
+    if (isFormInvalid) return;
+
+    setSubmitting(true);
     setErrorMsg(null);
     setSuccessMsg(null);
 
@@ -94,14 +147,16 @@ export function StockTransferModal({ isOpen, onClose, onSuccess }: StockTransfer
           onClose();
         }, 1800);
       } else if (response.status === 409) {
-        setErrorMsg('CONFLICTO DE CONCURRENCIA (@Version): El stock fue modificado por otra transacción en milisegundos. Por favor reintente.');
+        setErrorMsg(
+          'CONFLICTO DE CONCURRENCIA (@Version): El stock fue modificado por otra transacción simultánea. Por favor reintente.'
+        );
       } else {
         setErrorMsg(data.message || 'Error al procesar la transferencia de stock');
       }
     } catch {
       setErrorMsg(`No se pudo conectar con el servidor Backend (${API_BASE_URL})`);
     } finally {
-      setLoading(false);
+      setSubmitting(false);
     }
   };
 
@@ -142,131 +197,180 @@ export function StockTransferModal({ isOpen, onClose, onSuccess }: StockTransfer
           </div>
         )}
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">Producto a Transferir</label>
-            {productos.length > 0 ? (
+        {loadingData ? (
+          <div className="py-12 flex flex-col items-center justify-center gap-3 text-slate-400 text-xs">
+            <RefreshCw className="h-6 w-6 animate-spin text-blue-400" />
+            <span>Cargando catálogo y sucursales desde la base de datos...</span>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Producto Select */}
+            <div>
+              <label className="block text-xs font-semibold text-slate-300 mb-1">
+                Producto a Transferir
+              </label>
               <select
                 value={productoId}
                 onChange={(e) => setProductoId(e.target.value)}
                 required
                 className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs font-medium text-slate-200 focus:outline-none focus:border-blue-500"
               >
-                {productos.map((prod) => (
-                  <option key={prod.id} value={prod.id}>
-                    {prod.nombre} ({prod.sku})
-                  </option>
-                ))}
+                {productos.length === 0 ? (
+                  <option value="">No hay productos registrados</option>
+                ) : (
+                  productos.map((prod) => (
+                    <option key={prod.id} value={prod.id}>
+                      {prod.nombre} — [{prod.sku}]
+                    </option>
+                  ))
+                )}
               </select>
-            ) : (
-              <input
-                type="text"
-                value={productoId}
-                onChange={(e) => setProductoId(e.target.value)}
-                placeholder="ID Producto (UUID)"
-                required
-                className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs font-mono text-slate-200 focus:outline-none focus:border-blue-500"
-              />
+            </div>
+
+            {/* Sucursales Origen y Destino */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 mb-1">
+                  Sucursal Origen
+                </label>
+                <select
+                  value={sucursalOrigenId}
+                  onChange={(e) => setSucursalOrigenId(e.target.value)}
+                  required
+                  className={`w-full px-3 py-2 bg-slate-950 border rounded-lg text-xs font-medium text-slate-200 focus:outline-none ${
+                    isSameBranch
+                      ? 'border-rose-500/80 text-rose-300 focus:border-rose-500'
+                      : 'border-slate-800 focus:border-blue-500'
+                  }`}
+                >
+                  {sucursales.map((suc) => (
+                    <option key={suc.id} value={suc.id}>
+                      {suc.nombre}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 mb-1">
+                  Sucursal Destino
+                </label>
+                <select
+                  value={sucursalDestinoId}
+                  onChange={(e) => setSucursalDestinoId(e.target.value)}
+                  required
+                  className={`w-full px-3 py-2 bg-slate-950 border rounded-lg text-xs font-medium text-slate-200 focus:outline-none ${
+                    isSameBranch
+                      ? 'border-rose-500/80 text-rose-300 focus:border-rose-500'
+                      : 'border-slate-800 focus:border-blue-500'
+                  }`}
+                >
+                  {sucursales.map((suc) => (
+                    <option key={suc.id} value={suc.id}>
+                      {suc.nombre}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* Client Validation: Same Branch */}
+            {isSameBranch && (
+              <div className="p-2.5 rounded-lg bg-amber-950/40 border border-amber-800/50 text-amber-300 text-xs flex items-center gap-2">
+                <AlertTriangle className="h-4 w-4 text-amber-400 shrink-0" />
+                <span>La sucursal de origen y destino deben ser distintas.</span>
+              </div>
             )}
-          </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">Sucursal Origen</label>
-              {sucursales.length > 0 ? (
+            {/* Live Available Stock Badge */}
+            {stockDisponibleOrigen !== null && !isSameBranch && (
+              <div className="px-3 py-2 bg-slate-950 border border-slate-800/80 rounded-lg flex items-center justify-between text-xs">
+                <span className="text-slate-400">Stock disponible en sucursal origen:</span>
+                <span
+                  className={`font-bold font-mono px-2 py-0.5 rounded ${
+                    stockDisponibleOrigen === 0
+                      ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30'
+                      : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                  }`}
+                >
+                  {stockDisponibleOrigen} unidades
+                </span>
+              </div>
+            )}
+
+            {/* Cantidad and Operador */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 mb-1">
+                  Cantidad a Transferir
+                </label>
+                <input
+                  type="number"
+                  min="1"
+                  max={stockDisponibleOrigen !== null ? stockDisponibleOrigen : undefined}
+                  value={cantidad}
+                  onChange={(e) => setCantidad(Number(e.target.value))}
+                  required
+                  className={`w-full px-3 py-2 bg-slate-950 border rounded-lg text-xs font-mono text-slate-200 focus:outline-none ${
+                    isExceedingStock || isInvalidQuantity
+                      ? 'border-rose-500/80 text-rose-300 focus:border-rose-500'
+                      : 'border-slate-800 focus:border-blue-500'
+                  }`}
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 mb-1">
+                  Operador Responsable
+                </label>
                 <select
-                  value={sucursalOrigenId}
-                  onChange={(e) => setSucursalOrigenId(e.target.value)}
+                  value={usuarioId}
+                  onChange={(e) => setUsuarioId(e.target.value)}
                   required
                   className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs font-medium text-slate-200 focus:outline-none focus:border-blue-500"
                 >
-                  {sucursales.map((suc) => (
-                    <option key={suc.id} value={suc.id}>
-                      {suc.nombre}
-                    </option>
-                  ))}
+                  {usuarios.length === 0 ? (
+                    <option value="">No hay usuarios registrados</option>
+                  ) : (
+                    usuarios.map((u) => (
+                      <option key={u.id} value={u.id}>
+                        {u.nombre} ({u.email})
+                      </option>
+                    ))
+                  )}
                 </select>
-              ) : (
-                <input
-                  type="text"
-                  value={sucursalOrigenId}
-                  onChange={(e) => setSucursalOrigenId(e.target.value)}
-                  required
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs font-mono text-slate-200 focus:outline-none focus:border-blue-500"
-                />
-              )}
+              </div>
             </div>
 
-            <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">Sucursal Destino</label>
-              {sucursales.length > 0 ? (
-                <select
-                  value={sucursalDestinoId}
-                  onChange={(e) => setSucursalDestinoId(e.target.value)}
-                  required
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs font-medium text-slate-200 focus:outline-none focus:border-blue-500"
-                >
-                  {sucursales.map((suc) => (
-                    <option key={suc.id} value={suc.id}>
-                      {suc.nombre}
-                    </option>
-                  ))}
-                </select>
-              ) : (
-                <input
-                  type="text"
-                  value={sucursalDestinoId}
-                  onChange={(e) => setSucursalDestinoId(e.target.value)}
-                  required
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs font-mono text-slate-200 focus:outline-none focus:border-blue-500"
-                />
-              )}
-            </div>
-          </div>
+            {/* Client Validation: Exceeding Stock */}
+            {isExceedingStock && (
+              <div className="p-2.5 rounded-lg bg-rose-950/40 border border-rose-800/50 text-rose-300 text-xs flex items-center gap-2">
+                <AlertTriangle className="h-4 w-4 text-rose-400 shrink-0" />
+                <span>
+                  La cantidad ({cantidad}) supera las {stockDisponibleOrigen} unidades disponibles en origen.
+                </span>
+              </div>
+            )}
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">Cantidad a Transferir</label>
-              <input
-                type="number"
-                min="1"
-                value={cantidad}
-                onChange={(e) => setCantidad(Number(e.target.value))}
-                required
-                className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs font-mono text-slate-200 focus:outline-none focus:border-blue-500"
-              />
+            {/* Action Buttons */}
+            <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-800">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium text-xs rounded-lg transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                disabled={isFormInvalid}
+                className="px-5 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-medium text-xs rounded-lg transition-colors shadow-sm"
+              >
+                {submitting ? 'Procesando Transacción...' : 'Confirmar Transferencia'}
+              </button>
             </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">ID Operador</label>
-              <input
-                type="text"
-                value={usuarioId}
-                disabled
-                className="w-full px-3 py-2 bg-slate-950/60 border border-slate-800/80 rounded-lg text-xs font-mono text-slate-400 cursor-not-allowed"
-              />
-            </div>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-800">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium text-xs rounded-lg transition-colors"
-            >
-              Cancelar
-            </button>
-            <button
-              type="submit"
-              disabled={loading}
-              className="px-5 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white font-medium text-xs rounded-lg transition-colors shadow-sm"
-            >
-              {loading ? 'Procesando Transacción...' : 'Confirmar Transferencia'}
-            </button>
-          </div>
-        </form>
+          </form>
+        )}
       </div>
     </div>
   );
