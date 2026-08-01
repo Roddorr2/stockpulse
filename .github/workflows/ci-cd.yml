@@ -2,9 +2,9 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ main, feature/*, fix/*, refactor/* ]
+    branches: [ main, develop, feature/*, fix/*, refactor/* ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, develop ]
 
 jobs:
   backend-tests:
@@ -16,7 +16,7 @@ jobs:
         env:
           POSTGRES_DB: stockpulse_db
           POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: test
+          POSTGRES_PASSWORD: postgres
         ports:
           - "5432:5432"
         options: >-
@@ -46,7 +46,7 @@ jobs:
           DB_PORT: 5432
           DB_NAME: stockpulse_db
           DB_USER: postgres
-          DB_PASSWORD: test
+          DB_PASSWORD: postgres
 
   frontend-lint:
     name: Frontend Lint & Build
