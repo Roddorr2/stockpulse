@@ -8,6 +8,7 @@ public record LowStockEvent(
     String skuProducto,
     String nombreProducto,
     UUID sucursalId,
+    String nombreSucursal,
     int stockActual,
     int stockMinimo,
     LocalDateTime fecha

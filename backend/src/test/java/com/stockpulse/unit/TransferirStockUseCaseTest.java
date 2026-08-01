@@ -19,8 +19,10 @@ import com.stockpulse.domain.exception.SameBranchTransferException;
 import com.stockpulse.domain.model.Producto;
 import com.stockpulse.domain.model.Stock;
 import com.stockpulse.domain.model.TransferenciaStock;
+import com.stockpulse.domain.model.Sucursal;
 import com.stockpulse.domain.repository.ProductoRepository;
 import com.stockpulse.domain.repository.StockRepository;
+import com.stockpulse.domain.repository.SucursalRepository;
 import com.stockpulse.domain.repository.TransferenciaStockRepository;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -43,6 +45,9 @@ class TransferirStockUseCaseTest {
     private ProductoRepository productoRepository;
 
     @Mock
+    private SucursalRepository sucursalRepository;
+
+    @Mock
     private TransferenciaStockRepository transferenciaStockRepository;
 
     @Mock
@@ -54,15 +59,17 @@ class TransferirStockUseCaseTest {
     private UUID sucursalOrigenId;
     private UUID sucursalDestinoId;
     private UUID usuarioId;
+    private Sucursal sucursalOrigen;
 
     @BeforeEach
     void setUp() {
-        useCase = new TransferirStockUseCase(stockRepository, productoRepository,
+        useCase = new TransferirStockUseCase(stockRepository, productoRepository, sucursalRepository,
             transferenciaStockRepository, eventPublisher);
         productoId = UUID.randomUUID();
         sucursalOrigenId = UUID.randomUUID();
         sucursalDestinoId = UUID.randomUUID();
         usuarioId = UUID.randomUUID();
+        sucursalOrigen = new Sucursal(sucursalOrigenId, "Sucursal Central (Bogotá)", "Av. El Dorado #68B-31");
     }
 
     @Test
@@ -78,6 +85,7 @@ class TransferirStockUseCaseTest {
         Stock stockDestino = new Stock(UUID.randomUUID(), productoId, sucursalDestinoId, 5, 1L);
 
         when(productoRepository.findById(productoId)).thenReturn(Optional.of(producto));
+        when(sucursalRepository.findById(sucursalOrigenId)).thenReturn(Optional.of(sucursalOrigen));
         when(stockRepository.findByProductoIdAndSucursalId(productoId, sucursalOrigenId))
             .thenReturn(Optional.of(stockOrigen));
         when(stockRepository.findByProductoIdAndSucursalId(productoId, sucursalDestinoId))

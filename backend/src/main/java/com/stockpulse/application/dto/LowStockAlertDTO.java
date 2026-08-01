@@ -8,6 +8,7 @@ public record LowStockAlertDTO(
     String skuProducto,
     String nombreProducto,
     UUID sucursalId,
+    String nombreSucursal,
     int stockActual,
     int stockMinimo,
     String mensaje,

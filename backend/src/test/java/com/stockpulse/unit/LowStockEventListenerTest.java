@@ -46,6 +46,7 @@ class LowStockEventListenerTest {
             "SKU-MACBOOK",
             "MacBook Pro 16",
             sucursalId,
+            "Sucursal Central (Bogotá)",
             2,
             5,
             LocalDateTime.now()

@@ -8,9 +8,11 @@ import com.stockpulse.domain.exception.ResourceNotFoundException;
 import com.stockpulse.domain.exception.SameBranchTransferException;
 import com.stockpulse.domain.model.Producto;
 import com.stockpulse.domain.model.Stock;
+import com.stockpulse.domain.model.Sucursal;
 import com.stockpulse.domain.model.TransferenciaStock;
 import com.stockpulse.domain.repository.ProductoRepository;
 import com.stockpulse.domain.repository.StockRepository;
+import com.stockpulse.domain.repository.SucursalRepository;
 import com.stockpulse.domain.repository.TransferenciaStockRepository;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -19,15 +21,18 @@ public class TransferirStockUseCase {
 
     private final StockRepository stockRepository;
     private final ProductoRepository productoRepository;
+    private final SucursalRepository sucursalRepository;
     private final TransferenciaStockRepository transferenciaStockRepository;
     private final DomainEventPublisher eventPublisher;
 
     public TransferirStockUseCase(StockRepository stockRepository,
                                   ProductoRepository productoRepository,
+                                  SucursalRepository sucursalRepository,
                                   TransferenciaStockRepository transferenciaStockRepository,
                                   DomainEventPublisher eventPublisher) {
         this.stockRepository = stockRepository;
         this.productoRepository = productoRepository;
+        this.sucursalRepository = sucursalRepository;
         this.transferenciaStockRepository = transferenciaStockRepository;
         this.eventPublisher = eventPublisher;
     }
@@ -40,6 +45,10 @@ public class TransferirStockUseCase {
         Producto producto = productoRepository.findById(request.productoId())
             .orElseThrow(() -> new ResourceNotFoundException(
                 "Producto no encontrado con ID: " + request.productoId()));
+
+        Sucursal sucursalOrigen = sucursalRepository.findById(request.sucursalOrigenId())
+            .orElseThrow(() -> new ResourceNotFoundException(
+                "Sucursal origen no encontrada con ID: " + request.sucursalOrigenId()));
 
         Stock stockOrigen = stockRepository.findByProductoIdAndSucursalId(
             request.productoId(), request.sucursalOrigenId())
@@ -82,6 +91,7 @@ public class TransferirStockUseCase {
                 producto.getSku(),
                 producto.getNombre(),
                 stockOrigenGuardado.getSucursalId(),
+                sucursalOrigen.getNombre(),
                 stockOrigenGuardado.getCantidad(),
                 producto.getStockMinimo(),
                 LocalDateTime.now()

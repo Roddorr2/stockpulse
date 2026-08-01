@@ -9,6 +9,7 @@ export interface LowStockAlert {
   skuProducto: string;
   nombreProducto: string;
   sucursalId: string;
+  nombreSucursal?: string;
   stockActual: number;
   stockMinimo: number;
   mensaje: string;

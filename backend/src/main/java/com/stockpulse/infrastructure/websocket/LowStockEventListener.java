@@ -26,7 +26,7 @@ public class LowStockEventListener {
             event.skuProducto(),
             event.stockActual(),
             event.stockMinimo(),
-            event.sucursalId()
+            event.nombreSucursal()
         );
 
         LowStockAlertDTO payload = new LowStockAlertDTO(
@@ -34,6 +34,7 @@ public class LowStockEventListener {
             event.skuProducto(),
             event.nombreProducto(),
             event.sucursalId(),
+            event.nombreSucursal(),
             event.stockActual(),
             event.stockMinimo(),
             mensaje,
