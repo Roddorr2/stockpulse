@@ -3,9 +3,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Navbar } from '../components/Navbar';
 import { StockTransferModal } from '../components/StockTransferModal';
+import { RegisterSaleModal } from '../components/RegisterSaleModal';
 import { AlertToastContainer } from '../components/AlertToastContainer';
 import { useStockAlertsWS } from '../lib/useStockAlertsWS';
-import { Package, Building2, AlertTriangle, ArrowRightLeft, ShieldCheck, RefreshCw, Loader2, Database } from 'lucide-react';
+import { Package, Building2, AlertTriangle, ArrowRightLeft, ShieldCheck, RefreshCw, Loader2, Database, ShoppingBag } from 'lucide-react';
 
 export interface StockDTO {
   id: string;
@@ -25,6 +26,7 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8
 export default function Home() {
   const { alerts, isConnected, dismissAlert } = useStockAlertsWS();
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
+  const [isSaleModalOpen, setIsSaleModalOpen] = useState(false);
   const [stocks, setStocks] = useState<StockDTO[]>([]);
   const [loading, setLoading] = useState(true);
   const [apiError, setApiError] = useState<string | null>(null);
@@ -61,6 +63,7 @@ export default function Home() {
       <Navbar
         isConnected={isConnected}
         onOpenTransferModal={() => setIsTransferModalOpen(true)}
+        onOpenSaleModal={() => setIsSaleModalOpen(true)}
       />
 
       {/* Main Content Dashboard */}
@@ -116,6 +119,13 @@ export default function Home() {
               <p className="text-xs text-slate-400">Datos obtenidos de PostgreSQL con control de concurrencia optimista</p>
             </div>
             <div className="flex items-center gap-3">
+              <button
+                onClick={() => setIsSaleModalOpen(true)}
+                className="px-3 py-1.5 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-500/30 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5"
+              >
+                <ShoppingBag className="h-3.5 w-3.5" />
+                <span>Registrar Venta</span>
+              </button>
               <button
                 onClick={fetchStockMatrix}
                 disabled={loading}
@@ -219,6 +229,13 @@ export default function Home() {
       <StockTransferModal
         isOpen={isTransferModalOpen}
         onClose={() => setIsTransferModalOpen(false)}
+        onSuccess={fetchStockMatrix}
+      />
+
+      {/* Register Sale Modal */}
+      <RegisterSaleModal
+        isOpen={isSaleModalOpen}
+        onClose={() => setIsSaleModalOpen(false)}
         onSuccess={fetchStockMatrix}
       />
 
