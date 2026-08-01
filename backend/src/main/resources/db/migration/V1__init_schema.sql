@@ -54,7 +54,7 @@ CREATE TABLE ventas (
     total NUMERIC(12, 2) NOT NULL CHECK (total >= 0)
 );
 
-CREATE TABLE detalles_venta (
+CREATE TABLE detalle_ventas (
     id UUID PRIMARY KEY,
     venta_id UUID NOT NULL REFERENCES ventas(id) ON DELETE CASCADE,
     producto_id UUID NOT NULL REFERENCES productos(id),
