@@ -1,14 +1,15 @@
 'use client';
 
 import React from 'react';
-import { Activity, Radio, ArrowLeftRight } from 'lucide-react';
+import { Activity, Radio, ArrowLeftRight, ShoppingBag } from 'lucide-react';
 
 interface NavbarProps {
   isConnected: boolean;
   onOpenTransferModal: () => void;
+  onOpenSaleModal: () => void;
 }
 
-export function Navbar({ isConnected, onOpenTransferModal }: NavbarProps) {
+export function Navbar({ isConnected, onOpenTransferModal, onOpenSaleModal }: NavbarProps) {
   return (
     <header className="sticky top-0 z-40 border-b border-slate-800 bg-slate-950/80 backdrop-blur-md px-6 py-4">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
@@ -29,7 +30,7 @@ export function Navbar({ isConnected, onOpenTransferModal }: NavbarProps) {
         </div>
 
         {/* Status Indicators & Action Button */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           {/* WebSocket Status Indicator */}
           <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border text-xs font-medium ${
             isConnected 
@@ -39,6 +40,15 @@ export function Navbar({ isConnected, onOpenTransferModal }: NavbarProps) {
             <Radio className={`h-3.5 w-3.5 ${isConnected ? 'animate-pulse text-emerald-400' : 'text-slate-500'}`} />
             <span>{isConnected ? 'WebSocket STOMP Conectado' : 'Conectando WebSocket...'}</span>
           </div>
+
+          {/* Sale Button */}
+          <button
+            onClick={onOpenSaleModal}
+            className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-xs rounded-lg transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+          >
+            <ShoppingBag className="h-4 w-4" />
+            <span>Registrar Venta</span>
+          </button>
 
           {/* Transfer Button */}
           <button
