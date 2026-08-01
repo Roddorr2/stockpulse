@@ -128,6 +128,7 @@ class TransferirStockUseCaseTest {
         Stock stockDestino = new Stock(UUID.randomUUID(), productoId, sucursalDestinoId, 0, 1L);
 
         when(productoRepository.findById(productoId)).thenReturn(Optional.of(producto));
+        when(sucursalRepository.findById(sucursalOrigenId)).thenReturn(Optional.of(sucursalOrigen));
         when(stockRepository.findByProductoIdAndSucursalId(productoId, sucursalOrigenId))
             .thenReturn(Optional.of(stockOrigen));
         when(stockRepository.findByProductoIdAndSucursalId(productoId, sucursalDestinoId))
@@ -161,6 +162,7 @@ class TransferirStockUseCaseTest {
         Stock stockOrigen = new Stock(UUID.randomUUID(), productoId, sucursalOrigenId, 15, 1L);
 
         when(productoRepository.findById(productoId)).thenReturn(Optional.of(producto));
+        when(sucursalRepository.findById(sucursalOrigenId)).thenReturn(Optional.of(sucursalOrigen));
         when(stockRepository.findByProductoIdAndSucursalId(productoId, sucursalOrigenId))
             .thenReturn(Optional.of(stockOrigen));
 
