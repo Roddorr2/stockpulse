@@ -18,7 +18,7 @@ Escenario: Venta exitosa con stock disponible
 Escenario: Venta rechazada por stock insuficiente
   Dado que el producto "Mouse Inalámbrico" tiene 1 unidad en Sucursal 1
   Cuando el cajero intenta registrar una venta de 2 unidades
-  Entonces el sistema responde con error 422 y no se modifica el stock
+  Entonces el sistema responde con error 422 Unprocessable Entity y no se modifica el stock
 ```
 
 ---
@@ -43,7 +43,7 @@ Escenario: Dos ventas simultáneas sobre el último stock
 **Prioridad:** Must · **Estimación:** 5
 
 ```gherkin
-Escenario: Alerta disparada tras una venta
+Escenario: Alerta disparada tras una venta o transferencia
   Dado que el producto "Cable HDMI" tiene stock mínimo configurado en 5
   Y actualmente tiene 6 unidades en Sucursal 1
   Cuando se registra una venta de 2 unidades
