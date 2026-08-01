@@ -4,9 +4,9 @@ Formato: `Como <rol>, quiero <acción>, para <beneficio>`. Criterios de aceptaci
 
 ---
 
-### US-01 — Registrar una venta 🟢 (COMPLETADO)
+### US-01 — Registrar una venta
 **Como** Cajero, **quiero** registrar la venta de uno o más productos, **para** descontar el stock automáticamente y emitir el comprobante.
-**Prioridad:** Must · **Estimación:** 5 · **Estado:** 🟢 COMPLETADO (`POST /api/v1/sales`)
+**Prioridad:** Must · **Estimación:** 5
 
 ```gherkin
 Escenario: Venta exitosa con stock disponible
@@ -23,9 +23,9 @@ Escenario: Venta rechazada por stock insuficiente
 
 ---
 
-### US-02 — Prevenir sobreventa en concurrencia 🟢 (COMPLETADO)
+### US-02 — Prevenir sobreventa en concurrencia
 **Como** Administrador, **quiero** que el sistema nunca permita vender más stock del disponible aunque dos cajeros vendan al mismo tiempo, **para** evitar descuadres de inventario.
-**Prioridad:** Must · **Estimación:** 8 · **Estado:** 🟢 COMPLETADO (`@Version` Optimistic Locking)
+**Prioridad:** Must · **Estimación:** 8
 
 ```gherkin
 Escenario: Dos ventas simultáneas sobre el último stock
@@ -38,9 +38,9 @@ Escenario: Dos ventas simultáneas sobre el último stock
 
 ---
 
-### US-03 — Recibir alertas de bajo stock en tiempo real 🟢 (COMPLETADO)
+### US-03 — Recibir alertas de bajo stock en tiempo real
 **Como** Encargado de Sucursal, **quiero** recibir una notificación instantánea cuando el stock de un producto cae bajo el mínimo configurado, **para** poder reabastecer antes de quedarme sin inventario.
-**Prioridad:** Must · **Estimación:** 5 · **Estado:** 🟢 COMPLETADO (`/topic/stock-alerts/global`)
+**Prioridad:** Must · **Estimación:** 5
 
 ```gherkin
 Escenario: Alerta disparada tras una venta o transferencia
@@ -52,9 +52,9 @@ Escenario: Alerta disparada tras una venta o transferencia
 
 ---
 
-### US-04 — Transferir stock entre sucursales 🟢 (COMPLETADO)
+### US-04 — Transferir stock entre sucursales
 **Como** Encargado de Sucursal, **quiero** transferir stock desde otra sucursal con excedente, **para** cubrir la demanda local sin esperar una nueva compra.
-**Prioridad:** Must · **Estimación:** 5 · **Estado:** 🟢 COMPLETADO (`POST /api/v1/stock/transfer`)
+**Prioridad:** Must · **Estimación:** 5
 
 ```gherkin
 Escenario: Transferencia exitosa
@@ -102,6 +102,6 @@ Escenario: Cajero intenta crear un producto
 
 ---
 
-### US-08 — Ver reporte agregado de stock total 🟢 (COMPLETADO)
+### US-08 — Ver reporte agregado de stock total
 **Como** Administrador, **quiero** ver el stock total de un producto sumado entre todas las sucursales, **para** decidir compras a nivel de cadena.
-**Prioridad:** Could · **Estimación:** 3 · **Estado:** 🟢 COMPLETADO (`GET /api/v1/stock`)
+**Prioridad:** Could · **Estimación:** 3
