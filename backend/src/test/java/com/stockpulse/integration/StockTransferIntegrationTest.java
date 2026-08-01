@@ -87,7 +87,7 @@ class StockTransferIntegrationTest {
         productoId = UUID.randomUUID();
         sucursalOrigenId = UUID.randomUUID();
         sucursalDestinoId = UUID.randomUUID();
-        usuarioId = UUID.randomUUID();
+        usuarioId = UUID.fromString("aaaa1111-aaaa-1111-aaaa-111111111111");
 
         // Populate database via JPA Repositories
         productoRepository.save(new ProductoJpaEntity(productoId, "SKU-IPHONE", "iPhone 15 Pro", new BigDecimal("999.99"), 5));
