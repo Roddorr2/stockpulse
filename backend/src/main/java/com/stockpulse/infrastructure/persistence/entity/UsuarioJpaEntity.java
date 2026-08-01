@@ -2,9 +2,11 @@ package com.stockpulse.infrastructure.persistence.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import java.util.Objects;
 import java.util.UUID;
 
 @Entity
@@ -23,18 +25,19 @@ public class UsuarioJpaEntity {
     @Column(nullable = false, length = 100)
     private String nombre;
 
-    @Column(name = "rol_id", nullable = false)
-    private UUID rolId;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "rol_id", nullable = false)
+    private RolJpaEntity rol;
 
     public UsuarioJpaEntity() {
     }
 
-    public UsuarioJpaEntity(UUID id, String email, String passwordHash, String nombre, UUID rolId) {
+    public UsuarioJpaEntity(UUID id, String email, String passwordHash, String nombre, RolJpaEntity rol) {
         this.id = id;
         this.email = email;
         this.passwordHash = passwordHash;
         this.nombre = nombre;
-        this.rolId = rolId;
+        this.rol = rol;
     }
 
     public UUID getId() {
@@ -69,28 +72,12 @@ public class UsuarioJpaEntity {
         this.nombre = nombre;
     }
 
-    public UUID getRolId() {
-        return rolId;
+    public RolJpaEntity getRol() {
+        return rol;
     }
 
-    public void setRolId(UUID rolId) {
-        this.rolId = rolId;
+    public void setRol(RolJpaEntity rol) {
+        this.rol = rol;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        UsuarioJpaEntity that = (UsuarioJpaEntity) o;
-        return Objects.equals(id, that.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
 }

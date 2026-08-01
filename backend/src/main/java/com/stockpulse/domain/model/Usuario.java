@@ -9,17 +9,17 @@ public class Usuario {
     private String email;
     private String passwordHash;
     private String nombre;
-    private UUID rolId;
+    private Rol rol;
 
     public Usuario() {
     }
 
-    public Usuario(UUID id, String email, String passwordHash, String nombre, UUID rolId) {
+    public Usuario(UUID id, String email, String passwordHash, String nombre, Rol rol) {
         this.id = id;
         this.email = email;
         this.passwordHash = passwordHash;
         this.nombre = nombre;
-        this.rolId = rolId;
+        this.rol = rol;
     }
 
     public UUID getId() {
@@ -54,12 +54,16 @@ public class Usuario {
         this.nombre = nombre;
     }
 
-    public UUID getRolId() {
-        return rolId;
+    public Rol getRol() {
+        return rol;
     }
 
-    public void setRolId(UUID rolId) {
-        this.rolId = rolId;
+    public void setRol(Rol rol) {
+        this.rol = rol;
+    }
+
+    public UUID getRolId() {
+        return rol != null ? rol.getId() : null;
     }
 
     @Override
@@ -78,4 +82,5 @@ public class Usuario {
     public int hashCode() {
         return Objects.hash(id);
     }
+
 }
