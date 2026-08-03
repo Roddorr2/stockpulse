@@ -2,58 +2,79 @@
 
 @layer base {
   :root {
-    --bg-main: #0B0F17;
-    --bg-card: #151D2A;
-    --bg-card-hover: #1E293B;
-    --border-subtle: rgba(255, 255, 255, 0.08);
-    --border-strong: rgba(255, 255, 255, 0.16);
+    --bg-main: #070a0f;
+    --bg-surface: #0d131c;
+    --bg-surface-hover: #141c28;
+    --border-subtle: rgba(255, 255, 255, 0.07);
+    --border-strong: rgba(255, 255, 255, 0.15);
 
-    --text-primary: #F8FAFC;
-    --text-secondary: #94A3B8;
-    --text-muted: #64748B;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
 
-    --brand-blue: #2563EB;
-    --brand-blue-hover: #1D4ED8;
+    --brand-accent: #00f2fe;
+    --brand-accent-hover: #00c6ff;
 
-    --status-success: #10B981;
-    --status-warning: #F59E0B;
-    --status-error: #EF4444;
+    --status-success: #10b981;
+    --status-warning: #f59e0b;
+    --status-error: #ef4444;
   }
 
   body {
     background-color: var(--bg-main);
     color: var(--text-primary);
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    font-family: var(--font-geist-sans), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     -webkit-font-smoothing: antialiased;
+  }
+
+  /* Force tabular numbers on all font-mono elements */
+  .font-mono {
+    font-family: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-variant-numeric: tabular-nums;
   }
 }
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #0B0F17;
+  background: #070a0f;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #334155;
-  border-radius: 4px;
+  background: #1e293b;
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #475569;
+  background: #334155;
 }
 
-/* Pulse Glow Keyframes for STOMP Alerts */
+/* Operational Status Row Indicators */
+.row-status-optimo {
+  border-left: 3px solid var(--status-success);
+}
+
+.row-status-warning {
+  border-left: 3px solid var(--status-warning);
+  background-color: rgba(245, 158, 11, 0.03);
+}
+
+.row-status-danger {
+  border-left: 3px solid var(--status-error);
+  background-color: rgba(239, 68, 68, 0.04);
+}
+
+/* Pulse Glow Keyframes for Real-time Alerts */
 @keyframes alertPulse {
   0% {
     box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4);
   }
   70% {
-    box-shadow: 0 0 0 10px rgba(245, 158, 11, 0);
+    box-shadow: 0 0 0 8px rgba(245, 158, 11, 0);
   }
   100% {
     box-shadow: 0 0 0 0 rgba(245, 158, 11, 0);
