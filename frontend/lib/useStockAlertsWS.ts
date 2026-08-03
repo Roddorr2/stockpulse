@@ -56,7 +56,7 @@ export function useStockAlertsWS() {
       },
       onStompError: (frame) => {
         console.error('STOMP Error:', frame.headers['message']);
-        setConnectionError('Error en el servicio WebSocket STOMP');
+        setConnectionError('Error en el servicio de sincronización');
         setIsConnected(false);
       },
       onWebSocketClose: () => {

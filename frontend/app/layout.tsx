@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "StockPulse — Gestión de Inventario Multi-Sucursal en Tiempo Real",
-  description: "Sistema de gestión de inventarios multi-sucursal con control de concurrencia optimista y alertas STOMP WebSockets.",
+  description: "Sistema de gestión de inventarios multi-sucursal en tiempo real para optimizar el control de stock.",
 };
 
 export default function RootLayout({

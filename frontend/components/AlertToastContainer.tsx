@@ -27,7 +27,7 @@ export function AlertToastContainer({ alerts, onDismiss }: AlertToastContainerPr
             <div className="flex-1 space-y-1">
               <div className="flex items-center justify-between">
                 <span className="font-bold text-xs uppercase tracking-wider text-amber-400">
-                  Alerta STOMP WebSockets
+                  Alerta de Stock Mínimo
                 </span>
                 <span className="text-[10px] text-amber-300/70 font-mono">
                   {new Date(alert.timestamp).toLocaleTimeString()}
