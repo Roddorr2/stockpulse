@@ -22,7 +22,7 @@ export function Navbar({ isConnected, onOpenTransferModal, onOpenSaleModal }: Na
             <div className="flex items-center gap-2">
               <span className="font-bold text-lg text-slate-100 tracking-tight">StockPulse</span>
               <span className="text-[10px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20">
-                MVP v1.0
+                Sistema Activo
               </span>
             </div>
             <p className="text-xs text-slate-400">Inventario Multi-Sucursal en Tiempo Real</p>
@@ -31,14 +31,14 @@ export function Navbar({ isConnected, onOpenTransferModal, onOpenSaleModal }: Na
 
         {/* Status Indicators & Action Button */}
         <div className="flex items-center gap-3">
-          {/* WebSocket Status Indicator */}
+          {/* Real-time Status Indicator */}
           <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border text-xs font-medium ${
             isConnected 
               ? 'bg-emerald-950/40 border-emerald-800/50 text-emerald-400' 
               : 'bg-slate-900 border-slate-800 text-slate-400'
           }`}>
             <Radio className={`h-3.5 w-3.5 ${isConnected ? 'animate-pulse text-emerald-400' : 'text-slate-500'}`} />
-            <span>{isConnected ? 'WebSocket STOMP Conectado' : 'Conectando WebSocket...'}</span>
+            <span>{isConnected ? 'Sincronización en Vivo' : 'Conectando...'}</span>
           </div>
 
           {/* Sale Button */}

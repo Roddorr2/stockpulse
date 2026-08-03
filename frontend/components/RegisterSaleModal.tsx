@@ -96,14 +96,14 @@ export function RegisterSaleModal({ isOpen, onClose, onSuccess }: RegisterSaleMo
           onClose();
         }, 1800);
       } else if (response.status === 422) {
-        setErrorMsg(`⚠️ STOCK INSUFICIENTE (HTTP 422): ${data.message || 'No hay suficiente inventario en esta sucursal'}`);
+        setErrorMsg(`Stock insuficiente: ${data.message || 'No hay suficiente inventario disponible en esta sucursal'}`);
       } else if (response.status === 409) {
-        setErrorMsg('⚡ CONFLICTO DE CONCURRENCIA (@Version): Otra caja procesó una venta sobre este producto en milisegundos. Por favor reintente.');
+        setErrorMsg('El inventario de este producto fue actualizado recientemente por otra caja. Por favor, reintente la venta.');
       } else {
         setErrorMsg(data.message || 'Error al procesar la venta');
       }
     } catch {
-      setErrorMsg(`No se pudo conectar con el servidor Backend (${API_BASE_URL})`);
+      setErrorMsg('No se pudo conectar con el servidor. Por favor, intente nuevamente.');
     } finally {
       setLoading(false);
     }
@@ -120,7 +120,7 @@ export function RegisterSaleModal({ isOpen, onClose, onSuccess }: RegisterSaleMo
             </div>
             <div>
               <h2 className="font-bold text-slate-100 text-base">Registrar Nueva Venta (Caja)</h2>
-              <p className="text-xs text-slate-400">Descuento atómico de stock en sucursal</p>
+              <p className="text-xs text-slate-400">Descuento automático de inventario en sucursal</p>
             </div>
           </div>
           <button

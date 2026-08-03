@@ -148,13 +148,13 @@ export function StockTransferModal({ isOpen, onClose, onSuccess }: StockTransfer
         }, 1800);
       } else if (response.status === 409) {
         setErrorMsg(
-          'CONFLICTO DE CONCURRENCIA (@Version): El stock fue modificado por otra transacción simultánea. Por favor reintente.'
+          'El stock de este producto fue modificado por otra operación simultánea. Por favor, intente nuevamente.'
         );
       } else {
         setErrorMsg(data.message || 'Error al procesar la transferencia de stock');
       }
     } catch {
-      setErrorMsg(`No se pudo conectar con el servidor Backend (${API_BASE_URL})`);
+      setErrorMsg('No se pudo conectar con el servidor. Por favor, intente nuevamente.');
     } finally {
       setSubmitting(false);
     }
@@ -171,7 +171,7 @@ export function StockTransferModal({ isOpen, onClose, onSuccess }: StockTransfer
             </div>
             <div>
               <h2 className="font-bold text-slate-100 text-base">Nueva Transferencia de Stock</h2>
-              <p className="text-xs text-slate-400">Movimiento atómico entre sucursales</p>
+              <p className="text-xs text-slate-400">Transferencia directa entre sucursales</p>
             </div>
           </div>
           <button
@@ -200,7 +200,7 @@ export function StockTransferModal({ isOpen, onClose, onSuccess }: StockTransfer
         {loadingData ? (
           <div className="py-12 flex flex-col items-center justify-center gap-3 text-slate-400 text-xs">
             <RefreshCw className="h-6 w-6 animate-spin text-blue-400" />
-            <span>Cargando catálogo y sucursales desde la base de datos...</span>
+            <span>Cargando catálogo y sucursales...</span>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">

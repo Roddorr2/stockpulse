@@ -42,7 +42,7 @@ export default function Home() {
       const data: StockDTO[] = await response.json();
       setStocks(data);
     } catch {
-      setApiError(`No se pudo cargar la matriz de stock desde el servidor Backend (${API_BASE_URL})`);
+      setApiError('No se pudo cargar la matriz de inventario desde el servidor');
       setStocks([]);
     } finally {
       setLoading(false);
@@ -53,7 +53,7 @@ export default function Home() {
     fetchStockMatrix();
   }, [fetchStockMatrix]);
 
-  // Contadores dinámicos calculados a partir de los datos de la base de datos
+  // Contadores dinámicos calculados a partir de los datos de inventario
   const totalProductos = new Set(stocks.map((s) => s.productoId)).size;
   const totalSucursales = new Set(stocks.map((s) => s.sucursalId)).size;
 
@@ -105,8 +105,8 @@ export default function Home() {
               <ShieldCheck className="h-6 w-6" />
             </div>
             <div>
-              <p className="text-xs text-slate-400 font-medium">Concurrencia Optimista</p>
-              <h3 className="text-2xl font-bold text-slate-100">@Version Activo</h3>
+              <p className="text-xs text-slate-400 font-medium">Sincronización en Vivo</p>
+              <h3 className="text-2xl font-bold text-slate-100">{isConnected ? 'Activa' : 'Conectando'}</h3>
             </div>
           </div>
         </section>
@@ -116,7 +116,7 @@ export default function Home() {
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-base font-bold text-slate-100">Matriz de Inventario en Tiempo Real</h2>
-              <p className="text-xs text-slate-400">Datos obtenidos de PostgreSQL con control de concurrencia optimista</p>
+              <p className="text-xs text-slate-400">Inventario verificado en tiempo real</p>
             </div>
             <div className="flex items-center gap-3">
               <button
@@ -141,7 +141,7 @@ export default function Home() {
           {loading && (
             <div className="py-12 text-center space-y-3">
               <Loader2 className="h-8 w-8 text-blue-500 animate-spin mx-auto" />
-              <p className="text-xs text-slate-400">Cargando matriz de inventario desde PostgreSQL...</p>
+              <p className="text-xs text-slate-400">Cargando matriz de inventario...</p>
             </div>
           )}
 
@@ -149,7 +149,7 @@ export default function Home() {
             <div className="py-8 px-4 rounded-xl bg-slate-950 border border-slate-800 text-center space-y-3">
               <Database className="h-8 w-8 text-slate-500 mx-auto" />
               <div className="space-y-1">
-                <p className="text-sm font-semibold text-slate-300">Conexión con PostgreSQL en espera</p>
+                <p className="text-sm font-semibold text-slate-300">Servidor fuera de línea</p>
                 <p className="text-xs text-slate-500 max-w-md mx-auto">{apiError}</p>
               </div>
               <button
@@ -173,7 +173,6 @@ export default function Home() {
                     <th className="py-3 px-4">Sucursal</th>
                     <th className="py-3 px-4 text-center">Stock Actual</th>
                     <th className="py-3 px-4 text-center">Stock Mínimo</th>
-                    <th className="py-3 px-4 text-center">Versión (@Version)</th>
                     <th className="py-3 px-4 text-center">Estado</th>
                     <th className="py-3 px-4 text-right">Acción</th>
                   </tr>
@@ -190,7 +189,6 @@ export default function Home() {
                         <td className="py-3 px-4 text-slate-400">{item.nombreSucursal}</td>
                         <td className="py-3 px-4 text-center font-bold text-sm text-slate-100">{item.cantidad}</td>
                         <td className="py-3 px-4 text-center text-slate-400">{item.stockMinimo}</td>
-                        <td className="py-3 px-4 text-center font-mono text-xs text-blue-400">v{item.version}</td>
                         <td className="py-3 px-4 text-center">
                           {isOutOfStock ? (
                             <span className="px-2 py-1 rounded-md bg-rose-500/10 text-rose-400 border border-rose-500/20 font-semibold text-[10px]">
