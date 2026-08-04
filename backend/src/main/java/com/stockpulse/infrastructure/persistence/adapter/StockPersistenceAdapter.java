@@ -9,6 +9,8 @@ import com.stockpulse.infrastructure.persistence.repository.SpringDataStockRepos
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -38,6 +40,19 @@ public class StockPersistenceAdapter implements StockRepository {
     @Override
     public List<StockResponseDTO> findAllWithDetails() {
         return repository.findAllWithDetails();
+    }
+
+    @Override
+    public List<Stock> findByFiltros(UUID sucursalId) {
+        Specification<StockJpaEntity> spec = (root, query, cb) -> {
+            if (sucursalId != null) {
+                return cb.equal(root.get("sucursalId"), sucursalId);
+            }
+            return cb.conjunction();
+        };
+        return repository.findAll(spec).stream()
+            .map(mapper::toDomain)
+            .toList();
     }
 
 }

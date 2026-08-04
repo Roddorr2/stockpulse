@@ -28,7 +28,8 @@ public class CrearUsuarioUseCase {
             .orElseThrow(() -> new ResourceNotFoundException("Rol no encontrado con ID: " + request.rolId()));
 
         UUID newId = UUID.randomUUID();
-        String passwordHash = "$2a$10$eACCq7w9E/r18fN4LgVve.hQ0l2Jp3C5d6E7f8G9h0I1J2K3L4M5N6";
+        // TODO: En producción inyectar PasswordEncoder real
+        String passwordHash = "$2a$10$20NBXeL95sz16jSrMBR7Cu7sKnDJXneuFmnwo7vWacidZYxbVUSsW";
 
         Usuario usuario = new Usuario(newId, request.email(), passwordHash, request.nombre(), rol);
         Usuario guardado = usuarioRepository.save(usuario);

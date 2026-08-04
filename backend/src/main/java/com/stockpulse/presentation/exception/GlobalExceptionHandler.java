@@ -1,6 +1,7 @@
 package com.stockpulse.presentation.exception;
 
 import com.stockpulse.domain.exception.InsufficientStockException;
+import com.stockpulse.domain.exception.InvalidCredentialsException;
 import com.stockpulse.domain.exception.InvalidTransferQuantityException;
 import com.stockpulse.domain.exception.ResourceNotFoundException;
 import com.stockpulse.domain.exception.SameBranchTransferException;
@@ -25,6 +26,18 @@ public class GlobalExceptionHandler {
             request.getRequestURI()
         );
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
+
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<ErrorResponseDTO> handleInvalidCredentials(InvalidCredentialsException ex,
+                                                                   HttpServletRequest request) {
+        ErrorResponseDTO error = new ErrorResponseDTO(
+            HttpStatus.UNAUTHORIZED.value(),
+            "No Autorizado",
+            ex.getMessage(),
+            request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
     }
 
     @ExceptionHandler({

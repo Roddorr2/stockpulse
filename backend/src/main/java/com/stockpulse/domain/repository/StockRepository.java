@@ -14,4 +14,6 @@ public interface StockRepository {
 
     List<StockResponseDTO> findAllWithDetails();
 
+    List<Stock> findByFiltros(UUID sucursalId);
+
 }

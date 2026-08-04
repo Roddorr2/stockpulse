@@ -2,7 +2,7 @@ package com.stockpulse.application.usecase;
 
 import com.stockpulse.application.dto.LoginRequestDTO;
 import com.stockpulse.application.dto.TokenResponseDTO;
-import com.stockpulse.domain.exception.ResourceNotFoundException;
+import com.stockpulse.domain.exception.InvalidCredentialsException;
 import com.stockpulse.domain.model.Usuario;
 import com.stockpulse.domain.repository.UsuarioRepository;
 import com.stockpulse.infrastructure.security.JwtTokenProvider;
@@ -24,11 +24,11 @@ public class AutenticarUsuarioUseCase {
 
     public TokenResponseDTO ejecutar(LoginRequestDTO request) {
         Usuario usuario = usuarioRepository.findByEmail(request.email())
-            .orElseThrow(() -> new ResourceNotFoundException("Credenciales inválidas: email o contraseña incorrectos"));
+            .orElseThrow(() -> new InvalidCredentialsException("Credenciales inválidas: email o contraseña incorrectos"));
 
         // Validar hash BCrypt
         if (!passwordEncoder.matches(request.password(), usuario.getPasswordHash())) {
-            throw new IllegalArgumentException("Credenciales inválidas: email o contraseña incorrectos");
+            throw new InvalidCredentialsException("Credenciales inválidas: email o contraseña incorrectos");
         }
 
         String rolNombre = usuario.getRol() != null ? usuario.getRol().getNombre() : "CAJERO";

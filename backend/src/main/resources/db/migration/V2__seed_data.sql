@@ -6,11 +6,11 @@ INSERT INTO roles (id, nombre) VALUES
 ('22222222-2222-2222-2222-222222222222', 'ENCARGADO_SUCURSAL'),
 ('33333333-3333-3333-3333-333333333333', 'CAJERO');
 
--- 2. Usuarios (BCrypt password hash para 'password123': $2a$10$eACCq7w9E/r18f... / dummy hash para desarrollo)
+-- 2. Usuarios (BCrypt password hash para 'password123')
 INSERT INTO usuarios (id, email, password_hash, nombre, rol_id) VALUES
-('aaaa1111-aaaa-1111-aaaa-111111111111', 'admin@stockpulse.com', '$2a$10$eACCq7w9E/r18fN4LgVve.hQ0l2Jp3C5d6E7f8G9h0I1J2K3L4M5N6', 'Administrador Principal', '11111111-1111-1111-1111-111111111111'),
-('bbbb2222-bbbb-2222-bbbb-222222222222', 'encargado.bogota@stockpulse.com', '$2a$10$eACCq7w9E/r18fN4LgVve.hQ0l2Jp3C5d6E7f8G9h0I1J2K3L4M5N6', 'Carlos Mendoza', '22222222-2222-2222-2222-222222222222'),
-('cccc3333-cccc-3333-cccc-333333333333', 'cajero.central@stockpulse.com', '$2a$10$eACCq7w9E/r18fN4LgVve.hQ0l2Jp3C5d6E7f8G9h0I1J2K3L4M5N6', 'Ana Gómez', '33333333-3333-3333-3333-333333333333');
+('aaaa1111-aaaa-1111-aaaa-111111111111', 'admin@stockpulse.com', '$2a$10$20NBXeL95sz16jSrMBR7Cu7sKnDJXneuFmnwo7vWacidZYxbVUSsW', 'Administrador Principal', '11111111-1111-1111-1111-111111111111'),
+('bbbb2222-bbbb-2222-bbbb-222222222222', 'encargado.bogota@stockpulse.com', '$2a$10$20NBXeL95sz16jSrMBR7Cu7sKnDJXneuFmnwo7vWacidZYxbVUSsW', 'Carlos Mendoza', '22222222-2222-2222-2222-222222222222'),
+('cccc3333-cccc-3333-cccc-333333333333', 'cajero.central@stockpulse.com', '$2a$10$20NBXeL95sz16jSrMBR7Cu7sKnDJXneuFmnwo7vWacidZYxbVUSsW', 'Ana Gómez', '33333333-3333-3333-3333-333333333333');
 
 -- 3. Sucursales
 INSERT INTO sucursales (id, nombre, direccion) VALUES

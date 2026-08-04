@@ -3,6 +3,7 @@ package com.stockpulse.infrastructure.config;
 import com.stockpulse.application.usecase.AutenticarUsuarioUseCase;
 import com.stockpulse.application.usecase.ConsultarHistorialVentasUseCase;
 import com.stockpulse.application.usecase.CrearUsuarioUseCase;
+import com.stockpulse.application.usecase.GenerarReporteStockUseCase;
 import com.stockpulse.application.usecase.ObtenerMatrizStockUseCase;
 import com.stockpulse.application.usecase.ObtenerUsuariosUseCase;
 import com.stockpulse.application.usecase.RefrescarTokenUseCase;
@@ -75,6 +76,11 @@ public class UseCaseConfig {
     @Bean
     public CrearUsuarioUseCase crearUsuarioUseCase(UsuarioRepository usuarioRepository, RolRepository rolRepository) {
         return new CrearUsuarioUseCase(usuarioRepository, rolRepository);
+    }
+
+    @Bean
+    public GenerarReporteStockUseCase generarReporteStockUseCase(StockRepository stockRepository, ProductoRepository productoRepository) {
+        return new GenerarReporteStockUseCase(stockRepository, productoRepository);
     }
 
 }

@@ -15,6 +15,7 @@ import java.util.UUID;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class VentaPersistenceAdapter implements VentaRepository {
@@ -40,6 +41,7 @@ public class VentaPersistenceAdapter implements VentaRepository {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Venta> findAllBySucursalId(UUID sucursalId) {
         return repository.findAllBySucursalIdOrderByFechaDesc(sucursalId).stream()
             .map(mapper::toDomain)
@@ -47,6 +49,7 @@ public class VentaPersistenceAdapter implements VentaRepository {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Venta> findByFiltros(UUID sucursalId, UUID productoId, LocalDateTime fechaInicio, LocalDateTime fechaFin) {
         Specification<VentaJpaEntity> spec = (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
