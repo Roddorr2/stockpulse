@@ -110,22 +110,22 @@ export function RegisterSaleModal({ isOpen, onClose, onSuccess }: RegisterSaleMo
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4">
-      <div className="w-full max-w-lg bg-[#0d131c] border border-slate-800 rounded-xl p-6 shadow-2xl space-y-5">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/80 backdrop-blur-sm p-4">
+      <div className="w-full max-w-lg bg-zinc-800 border border-zinc-700 rounded-xl p-6 shadow-xl space-y-5">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-slate-800/80 pb-3.5">
+        <div className="flex items-center justify-between border-b border-zinc-700/80 pb-3.5">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+            <div className="p-2 rounded-lg bg-amber-600/10 text-amber-500 border border-amber-600/20">
               <ShoppingBag className="h-4 w-4" />
             </div>
             <div>
-              <h2 className="font-bold text-slate-100 text-sm">Registrar Venta (Caja)</h2>
-              <p className="text-[11px] text-slate-400">Descuento automático de inventario en sucursal</p>
+              <h2 className="font-bold text-zinc-100 text-sm">Registrar Venta (Caja)</h2>
+              <p className="text-[11px] text-zinc-400">Descuento automático de inventario en sucursal</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1 rounded-md text-slate-400 hover:text-slate-200 hover:bg-slate-900 transition-colors"
+            className="p-1 rounded-md text-zinc-400 hover:text-zinc-200 hover:bg-zinc-700 transition-colors"
           >
             <X className="h-4 w-4" />
           </button>
@@ -149,12 +149,12 @@ export function RegisterSaleModal({ isOpen, onClose, onSuccess }: RegisterSaleMo
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-medium text-slate-300 mb-1">Sucursal Vendedora</label>
+            <label className="block text-xs font-medium text-zinc-300 mb-1">Sucursal Vendedora</label>
             <select
               value={sucursalId}
               onChange={(e) => setSucursalId(e.target.value)}
               required
-              className="w-full px-3 py-2 bg-[#070a0f] border border-slate-800 rounded-md text-xs font-medium text-slate-200 focus:outline-none focus:border-cyan-500"
+              className="w-full px-3 py-2 bg-zinc-900 border border-zinc-700 rounded-md text-xs font-medium text-zinc-200 focus:outline-none focus:border-amber-500"
             >
               {sucursales.map((suc) => (
                 <option key={suc.id} value={suc.id}>
@@ -165,12 +165,12 @@ export function RegisterSaleModal({ isOpen, onClose, onSuccess }: RegisterSaleMo
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-300 mb-1">Producto a Vender</label>
+            <label className="block text-xs font-medium text-zinc-300 mb-1">Producto a Vender</label>
             <select
               value={productoId}
               onChange={(e) => setProductoId(e.target.value)}
               required
-              className="w-full px-3 py-2 bg-[#070a0f] border border-slate-800 rounded-md text-xs font-medium text-slate-200 focus:outline-none focus:border-cyan-500"
+              className="w-full px-3 py-2 bg-zinc-900 border border-zinc-700 rounded-md text-xs font-medium text-zinc-200 focus:outline-none focus:border-amber-500"
             >
               {productos.map((prod) => (
                 <option key={prod.id} value={prod.id}>
@@ -182,38 +182,38 @@ export function RegisterSaleModal({ isOpen, onClose, onSuccess }: RegisterSaleMo
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1">Cantidad a Vender</label>
+              <label className="block text-xs font-medium text-zinc-300 mb-1">Cantidad a Vender</label>
               <input
                 type="number"
                 min="1"
                 value={cantidad}
                 onChange={(e) => setCantidad(Number(e.target.value))}
                 required
-                className="w-full px-3 py-2 bg-[#070a0f] border border-slate-800 rounded-md text-xs font-mono text-slate-200 focus:outline-none focus:border-cyan-500"
+                className="w-full px-3 py-2 bg-zinc-900 border border-zinc-700 rounded-md text-xs font-mono text-zinc-200 focus:outline-none focus:border-amber-500"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1">Total Estimado</label>
-              <div className="w-full px-3 py-2 bg-[#070a0f] border border-slate-800/80 rounded-md text-xs font-mono font-bold text-cyan-400">
+              <label className="block text-xs font-medium text-zinc-300 mb-1">Total Estimado</label>
+              <div className="w-full px-3 py-2 bg-zinc-900 border border-zinc-700/80 rounded-md text-xs font-mono font-bold text-amber-500">
                 ${totalEstimado} USD
               </div>
             </div>
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center justify-end gap-2.5 pt-3.5 border-t border-slate-800/80">
+          <div className="flex items-center justify-end gap-2.5 pt-3.5 border-t border-zinc-700/80">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-1.5 bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 font-medium text-xs rounded-md transition-colors"
+              className="px-4 py-1.5 bg-zinc-900 hover:bg-zinc-700 text-zinc-300 border border-zinc-700 font-medium text-xs rounded-md transition-colors"
             >
               Cancelar
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-4 py-1.5 bg-cyan-500 hover:bg-cyan-400 disabled:opacity-50 text-slate-950 font-semibold text-xs rounded-md transition-colors shadow-sm"
+              className="px-4 py-1.5 bg-amber-600 hover:bg-amber-500 disabled:opacity-50 text-zinc-950 font-semibold text-xs rounded-md transition-colors"
             >
               {loading ? 'Procesando Venta...' : 'Confirmar Venta'}
             </button>
