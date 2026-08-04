@@ -84,13 +84,15 @@ export function Navbar({ isConnected, onOpenTransferModal, onOpenSaleModal }: Na
           {isAuthenticated ? (
             <>
               {/* Transfer Action */}
-              <button
-                onClick={onOpenTransferModal}
-                className="hidden lg:flex items-center gap-2 px-3.5 py-1.5 bg-transparent hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs font-medium rounded-md border border-zinc-700 transition-colors focus:outline-none"
-              >
-                <ArrowLeftRight className="h-3.5 w-3.5 text-zinc-400" />
-                <span>Transferir Stock</span>
-              </button>
+              {(user?.roles.includes('ADMIN') || user?.roles.includes('ENCARGADO_SUCURSAL')) && (
+                <button
+                  onClick={onOpenTransferModal}
+                  className="hidden lg:flex items-center gap-2 px-3.5 py-1.5 bg-transparent hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs font-medium rounded-md border border-zinc-700 transition-colors focus:outline-none"
+                >
+                  <ArrowLeftRight className="h-3.5 w-3.5 text-zinc-400" />
+                  <span>Transferir Stock</span>
+                </button>
+              )}
 
               {/* Primary Action: Register Sale */}
               <button

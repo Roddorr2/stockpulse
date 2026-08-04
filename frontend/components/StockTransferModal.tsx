@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { X, ArrowRightLeft, CheckCircle2, ShieldAlert, AlertTriangle, RefreshCw } from 'lucide-react';
+import { fetchApi, ApiError } from '../lib/api';
 
 interface StockTransferModalProps {
   isOpen: boolean;
@@ -33,7 +34,7 @@ interface StockItem {
   cantidad: number;
 }
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8080';
+
 
 export function StockTransferModal({ isOpen, onClose, onSuccess }: StockTransferModalProps) {
   const [productos, setProductos] = useState<ProductItem[]>([]);
@@ -59,10 +60,10 @@ export function StockTransferModal({ isOpen, onClose, onSuccess }: StockTransfer
       setSuccessMsg(null);
 
       Promise.all([
-        fetch(`${API_BASE_URL}/api/v1/products`).then((res) => (res.ok ? res.json() : [])),
-        fetch(`${API_BASE_URL}/api/v1/branches`).then((res) => (res.ok ? res.json() : [])),
-        fetch(`${API_BASE_URL}/api/v1/users`).then((res) => (res.ok ? res.json() : [])),
-        fetch(`${API_BASE_URL}/api/v1/stock`).then((res) => (res.ok ? res.json() : [])),
+        fetchApi<ProductItem[]>('/products').catch(() => []),
+        fetchApi<BranchItem[]>('/branches').catch(() => []),
+        fetchApi<UserItem[]>('/users').catch(() => []),
+        fetchApi<StockItem[]>('/stock').catch(() => []),
       ])
         .then(([prodsData, branchesData, usersData, stockData]) => {
           setProductos(prodsData);
@@ -122,11 +123,8 @@ export function StockTransferModal({ isOpen, onClose, onSuccess }: StockTransfer
     setSuccessMsg(null);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/v1/stock/transfer`, {
+      const data = await fetchApi<any>('/stock/transfer', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
         body: JSON.stringify({
           productoId,
           sucursalOrigenId,
@@ -136,25 +134,25 @@ export function StockTransferModal({ isOpen, onClose, onSuccess }: StockTransfer
         }),
       });
 
-      const data = await response.json();
-
-      if (response.ok) {
-        setSuccessMsg(
-          `¡Transferencia Exitosa! Nuevo stock origen: ${data.stockOrigenRestante} ud, destino: ${data.stockDestinoActual} ud.`
-        );
-        setTimeout(() => {
-          onSuccess();
-          onClose();
-        }, 1800);
-      } else if (response.status === 409) {
-        setErrorMsg(
-          'El stock de este producto fue modificado por otra operación simultánea. Por favor, intente nuevamente.'
-        );
+      setSuccessMsg(
+        `¡Transferencia Exitosa! Nuevo stock origen: ${data.stockOrigenRestante} ud, destino: ${data.stockDestinoActual} ud.`
+      );
+      setTimeout(() => {
+        onSuccess();
+        onClose();
+      }, 1800);
+    } catch (error: any) {
+      if (error instanceof ApiError) {
+        if (error.status === 409) {
+          setErrorMsg(
+            'El stock de este producto fue modificado por otra operación simultánea. Por favor, intente nuevamente.'
+          );
+        } else {
+          setErrorMsg(error.message || 'Error al procesar la transferencia de stock');
+        }
       } else {
-        setErrorMsg(data.message || 'Error al procesar la transferencia de stock');
+        setErrorMsg('No se pudo conectar con el servidor. Por favor, intente nuevamente.');
       }
-    } catch {
-      setErrorMsg('No se pudo conectar con el servidor. Por favor, intente nuevamente.');
     } finally {
       setSubmitting(false);
     }

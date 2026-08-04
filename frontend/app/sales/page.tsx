@@ -51,7 +51,6 @@ export default function SalesHistoryPage() {
       const data = await fetchApi<Venta[]>(`/sales?${params.toString()}`);
       setSales(data);
     } catch (error: unknown) {
-      console.error('Failed to fetch sales', error);
       if (error instanceof ApiError && error.status === 403) {
         setApiError('No tienes permisos suficientes para acceder a esta información o tu sesión es inválida.');
       } else {
@@ -63,8 +62,8 @@ export default function SalesHistoryPage() {
   }, [sucursalId, productoId, fechaInicio, fechaFin]);
 
   useEffect(() => {
-    fetchApi<Array<{id: string, nombre: string}>>('/branches').then(setBranches).catch(console.error);
-    fetchApi<Array<{id: string, nombre: string, sku: string}>>('/products').then(setProducts).catch(console.error);
+    fetchApi<Array<{id: string, nombre: string}>>('/branches').then(setBranches).catch(() => {});
+    fetchApi<Array<{id: string, nombre: string, sku: string}>>('/products').then(setProducts).catch(() => {});
     handleSearch();
   }, [handleSearch]);
 
@@ -73,7 +72,7 @@ export default function SalesHistoryPage() {
   };
 
   return (
-    <ProtectedRoute allowedRoles={['ADMIN', 'ENCARGADO_SUCURSAL']}>
+    <ProtectedRoute allowedRoles={['ADMIN', 'ENCARGADO_SUCURSAL', 'CAJERO']}>
       <div className="min-h-screen bg-zinc-900 text-zinc-100 flex flex-col font-sans">
         <Navbar 
           isConnected={true} 

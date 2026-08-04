@@ -9,6 +9,7 @@ import { useStockAlertsWS } from '../lib/useStockAlertsWS';
 import { ArrowRightLeft, RefreshCw, Loader2, Database, ShoppingBag, AlertTriangle, Layers, Building } from 'lucide-react';
 import { fetchApi } from '../lib/api';
 import { ProtectedRoute } from '../components/ProtectedRoute';
+import { useAuth } from '../lib/AuthContext';
 
 export interface StockDTO {
   id: string;
@@ -25,6 +26,8 @@ export interface StockDTO {
 
 export default function Home() {
   const { alerts, isConnected, dismissAlert } = useStockAlertsWS();
+  const { hasRole } = useAuth();
+  const canTransfer = hasRole('ADMIN') || hasRole('ENCARGADO_SUCURSAL');
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
   const [isSaleModalOpen, setIsSaleModalOpen] = useState(false);
   const [stocks, setStocks] = useState<StockDTO[]>([]);
@@ -54,7 +57,7 @@ export default function Home() {
   const totalSucursales = new Set(stocks.map((s) => s.sucursalId)).size;
 
   return (
-    <ProtectedRoute allowedRoles={['ADMIN', 'ENCARGADO_SUCURSAL']}>
+    <ProtectedRoute allowedRoles={['ADMIN', 'ENCARGADO_SUCURSAL', 'CAJERO']}>
       <div className="min-h-screen bg-zinc-900 text-zinc-100 flex flex-col font-sans">
         {/* Navigation Header */}
       <Navbar
@@ -214,7 +217,7 @@ export default function Home() {
                     <th className="py-2.5 px-4 text-center">Stock Actual</th>
                     <th className="py-2.5 px-4 text-center">Stock Mínimo</th>
                     <th className="py-2.5 px-4 text-center">Estado</th>
-                    <th className="py-2.5 px-4 text-right">Acción</th>
+                    {canTransfer && <th className="py-2.5 px-4 text-right">Acción</th>}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-zinc-700/60">
@@ -260,15 +263,17 @@ export default function Home() {
                           )}
                         </td>
                         {/* Botón secundario "Transferir" estilo ghost/outline neutro */}
-                        <td className="py-2.5 px-4 text-right">
-                          <button
-                            onClick={() => setIsTransferModalOpen(true)}
-                            className="px-2.5 py-1 text-zinc-400 hover:text-white hover:bg-zinc-700/80 border border-zinc-700 rounded text-[11px] font-medium transition-colors inline-flex items-center gap-1"
-                          >
-                            <ArrowRightLeft className="h-3 w-3" />
-                            <span>Transferir</span>
-                          </button>
-                        </td>
+                        {canTransfer && (
+                          <td className="py-2.5 px-4 text-right">
+                            <button
+                              onClick={() => setIsTransferModalOpen(true)}
+                              className="px-2.5 py-1 text-zinc-400 hover:text-white hover:bg-zinc-700/80 border border-zinc-700 rounded text-[11px] font-medium transition-colors inline-flex items-center gap-1"
+                            >
+                              <ArrowRightLeft className="h-3 w-3" />
+                              <span>Transferir</span>
+                            </button>
+                          </td>
+                        )}
                       </tr>
                     );
                   })}

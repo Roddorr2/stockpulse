@@ -6,6 +6,9 @@ import com.stockpulse.domain.exception.InvalidTransferQuantityException;
 import com.stockpulse.domain.exception.ResourceNotFoundException;
 import com.stockpulse.domain.exception.SameBranchTransferException;
 import jakarta.servlet.http.HttpServletRequest;
+
+import org.springframework.security.access.AccessDeniedException;
+
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -83,6 +86,18 @@ public class GlobalExceptionHandler {
             request.getRequestURI()
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponseDTO> handleAccessDenied(AccessDeniedException ex,
+                                                               HttpServletRequest request) {
+        ErrorResponseDTO error = new ErrorResponseDTO(
+            HttpStatus.FORBIDDEN.value(),
+            "Acceso Denegado",
+            "No tienes permisos suficientes para realizar esta acción",
+            request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
     }
 
     @ExceptionHandler(Exception.class)
