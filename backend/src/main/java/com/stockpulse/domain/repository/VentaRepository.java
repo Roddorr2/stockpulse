@@ -1,6 +1,7 @@
 package com.stockpulse.domain.repository;
 
 import com.stockpulse.domain.model.Venta;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -12,5 +13,7 @@ public interface VentaRepository {
     Optional<Venta> findById(UUID id);
 
     List<Venta> findAllBySucursalId(UUID sucursalId);
+
+    List<Venta> findByFiltros(UUID sucursalId, UUID productoId, LocalDateTime fechaInicio, LocalDateTime fechaFin);
 
 }

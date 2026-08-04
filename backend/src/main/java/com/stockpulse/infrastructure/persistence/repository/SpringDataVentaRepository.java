@@ -5,7 +5,9 @@ import java.util.List;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface SpringDataVentaRepository extends JpaRepository<VentaJpaEntity, UUID> {
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+
+public interface SpringDataVentaRepository extends JpaRepository<VentaJpaEntity, UUID>, JpaSpecificationExecutor<VentaJpaEntity> {
 
     List<VentaJpaEntity> findAllBySucursalIdOrderByFechaDesc(UUID sucursalId);
 

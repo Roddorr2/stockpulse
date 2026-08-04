@@ -82,9 +82,9 @@ Escenario: Transferencia rechazada por stock insuficiente en origen
 **Prioridad:** Must · **Estimación:** 5
 
 ```gherkin
-Escenario: Cajero intenta crear un producto
+Escenario: Cajero intenta realizar acción no permitida
   Dado que un usuario con rol CAJERO ha iniciado sesión
-  Cuando intenta hacer POST /api/v1/products
+  Cuando intenta hacer una operación reservada para ADMIN o ENCARGADO
   Entonces el sistema responde 403 Forbidden
 ```
 
