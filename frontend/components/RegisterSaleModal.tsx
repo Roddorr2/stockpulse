@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { X, ShoppingBag, CheckCircle2, ShieldAlert, AlertTriangle, RefreshCw } from 'lucide-react';
+import { fetchApi, ApiError } from '../lib/api';
 
 interface RegisterSaleModalProps {
   isOpen: boolean;
@@ -27,7 +28,7 @@ interface StockItem {
   cantidad: number;
 }
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8080';
+
 
 export function RegisterSaleModal({ isOpen, onClose, onSuccess }: RegisterSaleModalProps) {
   const [productos, setProductos] = useState<ProductItem[]>([]);
@@ -51,9 +52,9 @@ export function RegisterSaleModal({ isOpen, onClose, onSuccess }: RegisterSaleMo
       setSuccessMsg(null);
 
       Promise.all([
-        fetch(`${API_BASE_URL}/api/v1/products`).then((res) => (res.ok ? res.json() : [])),
-        fetch(`${API_BASE_URL}/api/v1/branches`).then((res) => (res.ok ? res.json() : [])),
-        fetch(`${API_BASE_URL}/api/v1/stock`).then((res) => (res.ok ? res.json() : [])),
+        fetchApi<ProductItem[]>('/products').catch(() => []),
+        fetchApi<BranchItem[]>('/branches').catch(() => []),
+        fetchApi<StockItem[]>('/stock').catch(() => []),
       ])
         .then(([prodsData, branchesData, stockData]) => {
           setProductos(prodsData);
@@ -105,11 +106,8 @@ export function RegisterSaleModal({ isOpen, onClose, onSuccess }: RegisterSaleMo
     setSuccessMsg(null);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/v1/sales`, {
+      const data = await fetchApi<any>('/sales', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
         body: JSON.stringify({
           sucursalId,
           usuarioId,
@@ -122,29 +120,29 @@ export function RegisterSaleModal({ isOpen, onClose, onSuccess }: RegisterSaleMo
         }),
       });
 
-      const data = await response.json();
-
-      if (response.ok) {
-        setSuccessMsg(
-          `¡Venta Registrada! Total: $${data.total} USD. Descuento de stock aplicado.`
-        );
-        setTimeout(() => {
-          onSuccess();
-          onClose();
-        }, 1800);
-      } else if (response.status === 422) {
-        const branchName = selectedBranch ? selectedBranch.nombre : 'la sucursal seleccionada';
-        const msg = data.message
-          ? data.message.replace(/sucursal [0-9a-fA-F-]{36}/g, `sucursal ${branchName}`)
-          : 'No hay suficiente inventario disponible en esta sucursal';
-        setErrorMsg(msg);
-      } else if (response.status === 409) {
-        setErrorMsg('El inventario de este producto fue actualizado recientemente por otra caja. Por favor, reintente la venta.');
+      setSuccessMsg(
+        `¡Venta Registrada! Total: $${data.total} USD. Descuento de stock aplicado.`
+      );
+      setTimeout(() => {
+        onSuccess();
+        onClose();
+      }, 1800);
+    } catch (error: any) {
+      if (error instanceof ApiError) {
+        if (error.status === 422) {
+          const branchName = selectedBranch ? selectedBranch.nombre : 'la sucursal seleccionada';
+          const msg = error.message
+            ? error.message.replace(/sucursal [0-9a-fA-F-]{36}/g, `sucursal ${branchName}`)
+            : 'No hay suficiente inventario disponible en esta sucursal';
+          setErrorMsg(msg);
+        } else if (error.status === 409) {
+          setErrorMsg('El inventario de este producto fue actualizado recientemente por otra caja. Por favor, reintente la venta.');
+        } else {
+          setErrorMsg(error.message || 'Error al procesar la venta');
+        }
       } else {
-        setErrorMsg(data.message || 'Error al procesar la venta');
+        setErrorMsg('No se pudo conectar con el servidor. Por favor, intente nuevamente.');
       }
-    } catch {
-      setErrorMsg('No se pudo conectar con el servidor. Por favor, intente nuevamente.');
     } finally {
       setLoading(false);
     }

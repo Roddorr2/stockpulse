@@ -55,7 +55,7 @@ public class VentaController {
         @ApiResponse(responseCode = "200", description = "Historial consultado con éxito")
     })
     @GetMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'ENCARGADO_SUCURSAL')")
+    @PreAuthorize("hasAnyRole('CAJERO', 'ADMIN', 'ENCARGADO_SUCURSAL')")
     public ResponseEntity<List<VentaResponseDTO>> getHistorialVentas(
             @RequestParam(required = false) UUID sucursalId,
             @RequestParam(required = false) UUID productoId,

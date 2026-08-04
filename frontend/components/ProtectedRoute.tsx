@@ -20,7 +20,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowe
       const hasRequiredRole = allowedRoles.some((role) => hasRole(role));
       if (!hasRequiredRole) {
         // Redirigir a una ruta por defecto si no tiene permisos
-        router.push('/');
+        router.push('/unauthorized');
       }
     }
   }, [isAuthenticated, allowedRoles, hasRole, router]);
