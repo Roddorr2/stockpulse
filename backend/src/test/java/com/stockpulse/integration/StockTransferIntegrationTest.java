@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -104,6 +105,7 @@ class StockTransferIntegrationTest {
     }
 
     @Test
+    @WithMockUser(username = "encargado@stockpulse.com", roles = {"ENCARGADO_SUCURSAL"})
     @DisplayName("Integración completa: Transferencia HTTP 200 con Testcontainers y PostgreSQL real")
     void transferirStock_EndpointCompleto_Retorna200YActualizaPostgres() throws Exception {
         TransferirStockRequestDTO request = new TransferirStockRequestDTO(
@@ -131,6 +133,7 @@ class StockTransferIntegrationTest {
     }
 
     @Test
+    @WithMockUser(username = "encargado@stockpulse.com", roles = {"ENCARGADO_SUCURSAL"})
     @DisplayName("Integración completa: Devuelve HTTP 400 cuando el stock es insuficiente en base de datos")
     void transferirStock_StockInsuficiente_Retorna400() throws Exception {
         TransferirStockRequestDTO request = new TransferirStockRequestDTO(
