@@ -3,8 +3,9 @@
 import React, { useState, useEffect } from 'react';
 import { ProtectedRoute } from '../../components/ProtectedRoute';
 import { fetchApi } from '../../lib/api';
-import { Search } from 'lucide-react';
-import styles from './sales.module.css';
+import { Search, ShoppingCart, Loader2, Database } from 'lucide-react';
+import { Navbar } from '../../components/Navbar';
+import { useAuth } from '../../lib/AuthContext';
 
 interface Venta {
   id: string;
@@ -34,6 +35,7 @@ export default function SalesHistoryPage() {
   const [fechaFin, setFechaFin] = useState('');
   
   const [isLoading, setIsLoading] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
 
   const handleSearch = React.useCallback(async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -48,8 +50,9 @@ export default function SalesHistoryPage() {
       
       const data = await fetchApi<Venta[]>(`/sales?${params.toString()}`);
       setSales(data);
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Failed to fetch sales', error);
+      setApiError(error instanceof Error ? error.message : 'Error cargando el historial de ventas');
     } finally {
       setIsLoading(false);
     }
@@ -67,100 +70,147 @@ export default function SalesHistoryPage() {
 
   return (
     <ProtectedRoute allowedRoles={['ADMIN', 'ENCARGADO_SUCURSAL']}>
-      <div className={styles.container}>
-        <div className={styles.header}>
-          <h1 className={styles.title}>Historial de Ventas</h1>
-        </div>
+      <div className="min-h-screen bg-zinc-900 text-zinc-100 flex flex-col font-sans">
+        <Navbar 
+          isConnected={true} 
+          onOpenTransferModal={() => {}} 
+          onOpenSaleModal={() => {}} 
+        />
         
-        <form className={styles.filterCard} onSubmit={handleSearch}>
-          <div className={styles.filterGroup}>
-            <label className={styles.label}>Sucursal</label>
-            <select className={styles.select} value={sucursalId} onChange={e => setSucursalId(e.target.value)}>
-              <option value="">Todas las sucursales</option>
-              {branches.map(b => (
-                <option key={b.id} value={b.id}>{b.nombre}</option>
-              ))}
-            </select>
+        <main className="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 space-y-6">
+          <div className="flex items-center gap-2 mb-2">
+            <ShoppingCart className="h-5 w-5 text-amber-500" />
+            <h1 className="text-xl font-bold text-zinc-100 tracking-tight">Historial de Ventas</h1>
           </div>
           
-          <div className={styles.filterGroup}>
-            <label className={styles.label}>Producto</label>
-            <select className={styles.select} value={productoId} onChange={e => setProductoId(e.target.value)}>
-              <option value="">Todos los productos</option>
-              {products.map(p => (
-                <option key={p.id} value={p.id}>{p.nombre} ({p.sku})</option>
-              ))}
-            </select>
-          </div>
-          
-          <div className={styles.filterGroup}>
-            <label className={styles.label}>Desde</label>
-            <input 
-              type="datetime-local" 
-              className={styles.input} 
-              value={fechaInicio} 
-              onChange={e => setFechaInicio(e.target.value)} 
-            />
-          </div>
-          
-          <div className={styles.filterGroup}>
-            <label className={styles.label}>Hasta</label>
-            <input 
-              type="datetime-local" 
-              className={styles.input} 
-              value={fechaFin} 
-              onChange={e => setFechaFin(e.target.value)} 
-            />
-          </div>
-          
-          <button type="submit" className={styles.button} disabled={isLoading}>
-            <Search size={18} />
-            Filtrar
-          </button>
-        </form>
+          {/* Filter Card */}
+          <form className="bg-zinc-800 border border-zinc-700/80 rounded-xl p-5 flex flex-wrap gap-4 items-end" onSubmit={handleSearch}>
+            <div className="flex-1 min-w-[200px] space-y-1.5">
+              <label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Sucursal</label>
+              <select 
+                className="w-full bg-zinc-900 border border-zinc-700 focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 rounded-lg px-3 py-2 text-zinc-100 outline-none transition-all text-sm" 
+                value={sucursalId} 
+                onChange={e => setSucursalId(e.target.value)}
+              >
+                <option value="">Todas las sucursales</option>
+                {branches.map(b => (
+                  <option key={b.id} value={b.id}>{b.nombre}</option>
+                ))}
+              </select>
+            </div>
+            
+            <div className="flex-1 min-w-[200px] space-y-1.5">
+              <label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Producto</label>
+              <select 
+                className="w-full bg-zinc-900 border border-zinc-700 focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 rounded-lg px-3 py-2 text-zinc-100 outline-none transition-all text-sm" 
+                value={productoId} 
+                onChange={e => setProductoId(e.target.value)}
+              >
+                <option value="">Todos los productos</option>
+                {products.map(p => (
+                  <option key={p.id} value={p.id}>{p.nombre} ({p.sku})</option>
+                ))}
+              </select>
+            </div>
+            
+            <div className="flex-1 min-w-[200px] space-y-1.5">
+              <label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Desde</label>
+              <input 
+                type="datetime-local" 
+                className="w-full bg-zinc-900 border border-zinc-700 focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 rounded-lg px-3 py-2 text-zinc-100 outline-none transition-all text-sm" 
+                value={fechaInicio} 
+                onChange={e => setFechaInicio(e.target.value)} 
+              />
+            </div>
+            
+            <div className="flex-1 min-w-[200px] space-y-1.5">
+              <label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Hasta</label>
+              <input 
+                type="datetime-local" 
+                className="w-full bg-zinc-900 border border-zinc-700 focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 rounded-lg px-3 py-2 text-zinc-100 outline-none transition-all text-sm" 
+                value={fechaFin} 
+                onChange={e => setFechaFin(e.target.value)} 
+              />
+            </div>
+            
+            <button 
+              type="submit" 
+              disabled={isLoading}
+              className="bg-amber-600 hover:bg-amber-500 disabled:opacity-50 text-zinc-950 font-semibold px-5 py-2 rounded-lg transition-colors text-sm flex items-center justify-center gap-2 h-[38px]"
+            >
+              <Search size={16} />
+              <span>Filtrar</span>
+            </button>
+          </form>
 
-        <div className={styles.tableContainer}>
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th>ID Venta</th>
-                <th>Fecha</th>
-                <th>Sucursal</th>
-                <th>Artículos</th>
-                <th>Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              {sales.length === 0 ? (
-                <tr>
-                  <td colSpan={5} className={styles.emptyState}>
-                    {isLoading ? 'Cargando ventas...' : 'No se encontraron ventas para estos filtros.'}
-                  </td>
-                </tr>
-              ) : (
-                sales.map(venta => (
-                  <tr key={venta.id}>
-                    <td><span className={styles.badge}>{venta.id.split('-')[0]}</span></td>
-                    <td>{new Date(venta.fecha).toLocaleString('es-ES')}</td>
-                    <td>{getBranchName(venta.sucursalId)}</td>
-                    <td>
-                      <ul style={{ listStyle: 'none', padding: 0, margin: 0, fontSize: '0.85rem' }}>
-                        {venta.detalles.map(d => (
-                          <li key={d.productoId}>
-                            {d.cantidad}x {d.nombreProducto} 
-                          </li>
-                        ))}
-                      </ul>
-                    </td>
-                    <td style={{ fontWeight: 600, color: 'var(--primary-color)' }}>
-                      ${venta.totalVenta.toFixed(2)}
-                    </td>
+          {/* Table section */}
+          <section className="bg-zinc-800 border border-zinc-700/80 rounded-xl overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs text-zinc-300">
+                <thead className="bg-zinc-900 border-b border-zinc-700 text-zinc-400 uppercase font-mono tracking-wider text-[10px]">
+                  <tr>
+                    <th className="py-3 px-5">ID Venta</th>
+                    <th className="py-3 px-5">Fecha</th>
+                    <th className="py-3 px-5">Sucursal</th>
+                    <th className="py-3 px-5">Artículos</th>
+                    <th className="py-3 px-5">Total</th>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+                </thead>
+                <tbody className="divide-y divide-zinc-700/60">
+                  {isLoading && sales.length === 0 ? (
+                    <tr>
+                      <td colSpan={5} className="py-12 text-center">
+                        <Loader2 className="h-6 w-6 text-amber-500 animate-spin mx-auto mb-2" />
+                        <span className="text-zinc-500 font-mono">Cargando ventas...</span>
+                      </td>
+                    </tr>
+                  ) : apiError ? (
+                    <tr>
+                      <td colSpan={5} className="py-12 text-center text-rose-400">
+                        <Database className="h-6 w-6 mx-auto mb-2 opacity-50" />
+                        <span>{apiError}</span>
+                      </td>
+                    </tr>
+                  ) : sales.length === 0 ? (
+                    <tr>
+                      <td colSpan={5} className="py-12 text-center text-zinc-500">
+                        No se encontraron ventas para estos filtros.
+                      </td>
+                    </tr>
+                  ) : (
+                    sales.map(venta => (
+                      <tr key={venta.id} className="hover:bg-zinc-700/30 transition-colors">
+                        <td className="py-3 px-5">
+                          <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500/10 text-amber-500 border border-amber-500/20">
+                            {venta.id.split('-')[0]}
+                          </span>
+                        </td>
+                        <td className="py-3 px-5 font-medium text-zinc-300">
+                          {new Date(venta.fecha).toLocaleString('es-ES')}
+                        </td>
+                        <td className="py-3 px-5 text-zinc-400">
+                          {getBranchName(venta.sucursalId)}
+                        </td>
+                        <td className="py-3 px-5">
+                          <ul className="space-y-1 text-zinc-400 font-mono text-[11px]">
+                            {venta.detalles.map(d => (
+                              <li key={d.productoId}>
+                                <span className="text-zinc-300 font-bold">{d.cantidad}x</span> {d.nombreProducto}
+                              </li>
+                            ))}
+                          </ul>
+                        </td>
+                        <td className="py-3 px-5 font-mono font-bold text-emerald-400">
+                          ${venta.totalVenta.toFixed(2)}
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </main>
       </div>
     </ProtectedRoute>
   );

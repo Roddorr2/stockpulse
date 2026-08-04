@@ -7,6 +7,8 @@ import { RegisterSaleModal } from '../components/RegisterSaleModal';
 import { AlertToastContainer } from '../components/AlertToastContainer';
 import { useStockAlertsWS } from '../lib/useStockAlertsWS';
 import { ArrowRightLeft, RefreshCw, Loader2, Database, ShoppingBag, AlertTriangle, Layers, Building } from 'lucide-react';
+import { fetchApi } from '../lib/api';
+import { ProtectedRoute } from '../components/ProtectedRoute';
 
 export interface StockDTO {
   id: string;
@@ -21,8 +23,6 @@ export interface StockDTO {
   version: number;
 }
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8080';
-
 export default function Home() {
   const { alerts, isConnected, dismissAlert } = useStockAlertsWS();
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
@@ -35,11 +35,7 @@ export default function Home() {
     setLoading(true);
     setApiError(null);
     try {
-      const response = await fetch(`${API_BASE_URL}/api/v1/stock`);
-      if (!response.ok) {
-        throw new Error(`Error HTTP ${response.status}`);
-      }
-      const data: StockDTO[] = await response.json();
+      const data = await fetchApi<StockDTO[]>('/stock');
       setStocks(data);
     } catch {
       setApiError('No se pudo cargar la matriz de inventario desde el servidor');
@@ -58,8 +54,9 @@ export default function Home() {
   const totalSucursales = new Set(stocks.map((s) => s.sucursalId)).size;
 
   return (
-    <div className="min-h-screen bg-zinc-900 text-zinc-100 flex flex-col font-sans">
-      {/* Navigation Header */}
+    <ProtectedRoute allowedRoles={['ADMIN', 'ENCARGADO_SUCURSAL']}>
+      <div className="min-h-screen bg-zinc-900 text-zinc-100 flex flex-col font-sans">
+        {/* Navigation Header */}
       <Navbar
         isConnected={isConnected}
         onOpenTransferModal={() => setIsTransferModalOpen(true)}
@@ -299,5 +296,6 @@ export default function Home() {
       {/* Real-time Alert Toast Container */}
       <AlertToastContainer alerts={alerts} onDismiss={dismissAlert} />
     </div>
+    </ProtectedRoute>
   );
 }

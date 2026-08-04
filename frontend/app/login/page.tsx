@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useAuth } from '../../lib/AuthContext';
-import styles from './login.module.css';
+import { Package, ShieldAlert } from 'lucide-react';
 
 export default function LoginPage() {
   const [username, setUsername] = useState('');
@@ -17,7 +17,8 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      const res = await fetch('http://localhost:8080/api/v1/auth/login', {
+      const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8080';
+      const res = await fetch(`${API_BASE_URL}/api/v1/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -31,7 +32,6 @@ export default function LoginPage() {
 
       const data = await res.json();
       
-      // Decodificamos el JWT para obtener los roles y el username
       const tokenPayload = JSON.parse(atob(data.token.split('.')[1]));
       
       const user = {
@@ -42,7 +42,6 @@ export default function LoginPage() {
 
       login(data.token, data.refreshToken, user);
       
-      // Redirigir al home
       window.location.href = '/';
     } catch (err: unknown) {
       if (err instanceof Error) {
@@ -56,46 +55,70 @@ export default function LoginPage() {
   };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.card}>
-        <div className={styles.header}>
-          <h1 className={styles.title}>Bienvenido a StockPulse</h1>
-          <p className={styles.subtitle}>Ingresa a tu cuenta para gestionar el inventario</p>
-        </div>
+    <div className="min-h-screen bg-zinc-950 flex flex-col items-center justify-center p-4 relative overflow-hidden font-sans">
+      
+      {/* Background glowing effects */}
+      <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-amber-600/10 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-amber-900/10 rounded-full blur-[100px] pointer-events-none" />
+
+      <div className="w-full max-w-md bg-zinc-900/80 backdrop-blur-xl border border-zinc-800 rounded-2xl shadow-2xl p-8 relative z-10">
         
-        <form onSubmit={handleSubmit} className={styles.form}>
-          {error && <div className={styles.error}>{error}</div>}
+        <div className="flex flex-col items-center mb-8">
+          <div className="h-12 w-12 rounded-xl bg-amber-600/10 border border-amber-600/20 flex items-center justify-center text-amber-500 mb-4">
+            <Package className="h-6 w-6" />
+          </div>
+          <h1 className="text-2xl font-bold text-zinc-100 tracking-tight">Acceso a StockPulse</h1>
+          <p className="text-sm text-zinc-400 mt-1">Terminal Operativo de Inventario</p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-5">
           
-          <div className={styles.inputGroup}>
-            <label htmlFor="username" className={styles.label}>Usuario</label>
+          {error && (
+            <div className="bg-rose-500/10 border border-rose-500/20 text-rose-400 p-3 rounded-lg text-sm flex items-center gap-2">
+              <ShieldAlert className="h-4 w-4" />
+              <span>{error}</span>
+            </div>
+          )}
+
+          <div className="space-y-1.5">
+            <label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider" htmlFor="username">
+              Usuario
+            </label>
             <input
               id="username"
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className={styles.input}
+              className="w-full bg-zinc-950 border border-zinc-800 focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 rounded-lg px-4 py-2.5 text-zinc-100 placeholder-zinc-600 outline-none transition-all text-sm"
               placeholder="Ej: admin"
               required
             />
           </div>
-          
-          <div className={styles.inputGroup}>
-            <label htmlFor="password" className={styles.label}>Contraseña</label>
+
+          <div className="space-y-1.5">
+            <label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider" htmlFor="password">
+              Contraseña
+            </label>
             <input
               id="password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className={styles.input}
+              className="w-full bg-zinc-950 border border-zinc-800 focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 rounded-lg px-4 py-2.5 text-zinc-100 placeholder-zinc-600 outline-none transition-all text-sm"
               placeholder="••••••••"
               required
             />
           </div>
-          
-          <button type="submit" className={styles.button} disabled={isLoading}>
-            {isLoading ? 'Iniciando sesión...' : 'Ingresar'}
+
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full bg-amber-600 hover:bg-amber-500 disabled:opacity-50 disabled:hover:bg-amber-600 text-zinc-950 font-semibold py-2.5 rounded-lg transition-colors text-sm shadow-lg shadow-amber-900/20 flex items-center justify-center gap-2 mt-4"
+          >
+            {isLoading ? 'Autenticando...' : 'Iniciar Sesión'}
           </button>
         </form>
+
       </div>
     </div>
   );
