@@ -1,12 +1,16 @@
 package com.stockpulse.infrastructure.config;
 
 import com.stockpulse.application.usecase.AutenticarUsuarioUseCase;
+import com.stockpulse.application.usecase.ConsultarHistorialVentasUseCase;
+import com.stockpulse.application.usecase.CrearUsuarioUseCase;
 import com.stockpulse.application.usecase.ObtenerMatrizStockUseCase;
+import com.stockpulse.application.usecase.ObtenerUsuariosUseCase;
 import com.stockpulse.application.usecase.RefrescarTokenUseCase;
 import com.stockpulse.application.usecase.RegistrarVentaUseCase;
 import com.stockpulse.application.usecase.TransferirStockUseCase;
 import com.stockpulse.domain.event.DomainEventPublisher;
 import com.stockpulse.domain.repository.ProductoRepository;
+import com.stockpulse.domain.repository.RolRepository;
 import com.stockpulse.domain.repository.StockRepository;
 import com.stockpulse.domain.repository.SucursalRepository;
 import com.stockpulse.domain.repository.TransferenciaStockRepository;
@@ -56,6 +60,21 @@ public class UseCaseConfig {
     public RefrescarTokenUseCase refrescarTokenUseCase(UsuarioRepository usuarioRepository,
                                                         JwtTokenProvider tokenProvider) {
         return new RefrescarTokenUseCase(usuarioRepository, tokenProvider);
+    }
+
+    @Bean
+    public ConsultarHistorialVentasUseCase consultarHistorialVentasUseCase(VentaRepository ventaRepository, ProductoRepository productoRepository) {
+        return new ConsultarHistorialVentasUseCase(ventaRepository, productoRepository);
+    }
+
+    @Bean
+    public ObtenerUsuariosUseCase obtenerUsuariosUseCase(UsuarioRepository usuarioRepository) {
+        return new ObtenerUsuariosUseCase(usuarioRepository);
+    }
+
+    @Bean
+    public CrearUsuarioUseCase crearUsuarioUseCase(UsuarioRepository usuarioRepository, RolRepository rolRepository) {
+        return new CrearUsuarioUseCase(usuarioRepository, rolRepository);
     }
 
 }
