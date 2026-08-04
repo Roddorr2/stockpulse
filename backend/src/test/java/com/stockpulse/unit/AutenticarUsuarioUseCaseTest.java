@@ -3,6 +3,7 @@ package com.stockpulse.unit;
 import com.stockpulse.application.dto.LoginRequestDTO;
 import com.stockpulse.application.dto.TokenResponseDTO;
 import com.stockpulse.application.usecase.AutenticarUsuarioUseCase;
+import com.stockpulse.domain.exception.InvalidCredentialsException;
 import com.stockpulse.domain.model.Rol;
 import com.stockpulse.domain.model.Usuario;
 import com.stockpulse.domain.repository.UsuarioRepository;
@@ -73,7 +74,7 @@ class AutenticarUsuarioUseCaseTest {
         when(usuarioRepository.findByEmail("admin@stockpulse.com")).thenReturn(Optional.of(usuario));
         when(passwordEncoder.matches("wrongpassword", "$2a$10$hash")).thenReturn(false);
 
-        assertThrows(IllegalArgumentException.class, () -> useCase.ejecutar(request));
+        assertThrows(InvalidCredentialsException.class, () -> useCase.ejecutar(request));
     }
 
 }
