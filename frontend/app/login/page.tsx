@@ -23,7 +23,7 @@ export default function LoginPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ email: username, password }),
       });
 
       if (!res.ok) {
@@ -71,7 +71,7 @@ export default function LoginPage() {
           <p className="text-sm text-zinc-400 mt-1">Terminal Operativo de Inventario</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form noValidate onSubmit={handleSubmit} className="space-y-5">
           
           {error && (
             <div className="bg-rose-500/10 border border-rose-500/20 text-rose-400 p-3 rounded-lg text-sm flex items-center gap-2">
@@ -82,15 +82,15 @@ export default function LoginPage() {
 
           <div className="space-y-1.5">
             <label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider" htmlFor="username">
-              Usuario
+              Email
             </label>
             <input
               id="username"
-              type="text"
+              type="email"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               className="w-full bg-zinc-950 border border-zinc-800 focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 rounded-lg px-4 py-2.5 text-zinc-100 placeholder-zinc-600 outline-none transition-all text-sm"
-              placeholder="Ej: admin"
+              placeholder="Ej: admin@ejemplo.com"
               required
             />
           </div>
