@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { ProtectedRoute } from '../../components/ProtectedRoute';
-import { fetchApi } from '../../lib/api';
+import { fetchApi, ApiError } from '../../lib/api';
 import { Search, ShoppingCart, Loader2, Database } from 'lucide-react';
 import { Navbar } from '../../components/Navbar';
 import { useAuth } from '../../lib/AuthContext';
@@ -11,8 +11,8 @@ interface Venta {
   id: string;
   fecha: string;
   sucursalId: string;
-  detalles: DetalleVenta[];
-  totalVenta: number;
+  items: DetalleVenta[];
+  total: number;
 }
 
 interface DetalleVenta {
@@ -52,7 +52,11 @@ export default function SalesHistoryPage() {
       setSales(data);
     } catch (error: unknown) {
       console.error('Failed to fetch sales', error);
-      setApiError(error instanceof Error ? error.message : 'Error cargando el historial de ventas');
+      if (error instanceof ApiError && error.status === 403) {
+        setApiError('No tienes permisos suficientes para acceder a esta información o tu sesión es inválida.');
+      } else {
+        setApiError(error instanceof Error ? error.message : 'Error cargando el historial de ventas');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -193,15 +197,15 @@ export default function SalesHistoryPage() {
                         </td>
                         <td className="py-3 px-5">
                           <ul className="space-y-1 text-zinc-400 font-mono text-[11px]">
-                            {venta.detalles.map(d => (
+                            {venta.items?.map(d => (
                               <li key={d.productoId}>
                                 <span className="text-zinc-300 font-bold">{d.cantidad}x</span> {d.nombreProducto}
                               </li>
                             ))}
                           </ul>
                         </td>
-                        <td className="py-3 px-5 font-mono font-bold text-emerald-400">
-                          ${venta.totalVenta.toFixed(2)}
+                        <td className="py-3 px-5 font-bold text-amber-500">
+                          ${venta.total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </td>
                       </tr>
                     ))

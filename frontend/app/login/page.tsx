@@ -32,15 +32,15 @@ export default function LoginPage() {
 
       const data = await res.json();
       
-      const tokenPayload = JSON.parse(atob(data.token.split('.')[1]));
+      const tokenPayload = JSON.parse(atob(data.accessToken.split('.')[1]));
       
       const user = {
-        id: tokenPayload.sub,
+        id: tokenPayload.usuarioId || tokenPayload.sub,
         username: tokenPayload.sub,
-        roles: tokenPayload.roles,
+        roles: tokenPayload.rol ? [tokenPayload.rol] : [],
       };
 
-      login(data.token, data.refreshToken, user);
+      login(data.accessToken, data.refreshToken, user);
       
       window.location.href = '/';
     } catch (err: unknown) {

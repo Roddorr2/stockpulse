@@ -1,6 +1,10 @@
-export interface ApiError {
-  message: string;
-  status?: number;
+export class ApiError extends Error {
+  public status?: number;
+  constructor(message: string, status?: number) {
+    super(message);
+    this.name = 'ApiError';
+    this.status = status;
+  }
 }
 
 const API_BASE_URL = `${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8080'}/api/v1`;
@@ -85,9 +89,9 @@ export const fetchApi = async <T = unknown>(endpoint: string, options: RequestIn
         }
 
         const data = await refreshResponse.json();
-        setAuthTokens(data.token, data.refreshToken);
+        setAuthTokens(data.accessToken, data.refreshToken);
         isRefreshing = false;
-        onRefreshed(data.token);
+        onRefreshed(data.accessToken);
       } catch (error) {
         isRefreshing = false;
         clearAuthTokens();
@@ -108,7 +112,7 @@ export const fetchApi = async <T = unknown>(endpoint: string, options: RequestIn
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => null);
-    throw { message: errorData?.message || 'Error en la petición', status: response.status } as ApiError;
+    throw new ApiError(errorData?.message || 'Error en la petición', response.status);
   }
 
   // Algunos endpoints pueden devolver 204 No Content
