@@ -62,11 +62,11 @@ public class RegistrarVentaUseCase {
                 .orElseThrow(() -> new ResourceNotFoundException(
                     "No se encontró registro de stock para el producto en la sucursal seleccionada"));
 
-            // RN-01 & RN-04: Disminuir stock (lanza InsufficientStockException si saldo < cantidad)
-            stock.disminuirStock(item.cantidad());
+            // Disminuir stock
+            stock.disminuirStock(item.cantidad(), sucursal.getNombre());
             stockRepository.save(stock);
 
-            // RN-05 / US-03: Si el stock actual cae bajo el umbral mínimo, disparar evento de bajo stock
+            // Si el stock actual cae bajo el umbral mínimo, disparar evento de bajo stock
             if (stock.getCantidad() <= producto.getStockMinimo()) {
                 eventPublisher.publish(new LowStockEvent(
                     producto.getId(),

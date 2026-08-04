@@ -66,7 +66,7 @@ public class TransferirStockUseCase {
                 null
             ));
 
-        stockOrigen.disminuirStock(request.cantidad());
+        stockOrigen.disminuirStock(request.cantidad(), sucursalOrigen.getNombre());
         stockDestino.aumentarStock(request.cantidad());
 
         Stock stockOrigenGuardado = stockRepository.save(stockOrigen);

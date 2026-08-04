@@ -24,13 +24,20 @@ public class Stock {
     }
 
     public void disminuirStock(int cantidadARestar) {
+        disminuirStock(cantidadARestar, null);
+    }
+
+    public void disminuirStock(int cantidadARestar, String nombreSucursal) {
         if (cantidadARestar <= 0) {
             throw new InvalidTransferQuantityException("La cantidad a transferir debe ser mayor a cero");
         }
         if (this.cantidad < cantidadARestar) {
+            String sucursalLabel = (nombreSucursal != null && !nombreSucursal.isBlank())
+                ? nombreSucursal
+                : this.sucursalId.toString();
             throw new InsufficientStockException(
                 String.format("Stock insuficiente en la sucursal %s. Stock disponible: %d, solicitado: %d",
-                    this.sucursalId, this.cantidad, cantidadARestar)
+                    sucursalLabel, this.cantidad, cantidadARestar)
             );
         }
         this.cantidad -= cantidadARestar;
