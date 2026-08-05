@@ -14,6 +14,7 @@ interface ProductItem {
   id: string;
   sku: string;
   nombre: string;
+  activo: boolean;
 }
 
 interface BranchItem {
@@ -123,7 +124,7 @@ export function StockTransferModal({ isOpen, onClose, onSuccess }: StockTransfer
     setSuccessMsg(null);
 
     try {
-      const data = await fetchApi<any>('/stock/transfer', {
+      const data = await fetchApi<{ stockOrigenRestante: number; stockDestinoActual: number }>('/stock/transfer', {
         method: 'POST',
         body: JSON.stringify({
           productoId,
@@ -141,7 +142,7 @@ export function StockTransferModal({ isOpen, onClose, onSuccess }: StockTransfer
         onSuccess();
         onClose();
       }, 1800);
-    } catch (error: any) {
+    } catch (error: unknown) {
       if (error instanceof ApiError) {
         if (error.status === 409) {
           setErrorMsg(
@@ -217,8 +218,8 @@ export function StockTransferModal({ isOpen, onClose, onSuccess }: StockTransfer
                   <option value="">No hay productos registrados</option>
                 ) : (
                   productos.map((prod) => (
-                    <option key={prod.id} value={prod.id}>
-                      {prod.nombre} — [{prod.sku}]
+                    <option key={prod.id} value={prod.id} disabled={!prod.activo}>
+                      {prod.nombre} — [{prod.sku}] {!prod.activo ? '(Inactivo)' : ''}
                     </option>
                   ))
                 )}

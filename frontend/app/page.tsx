@@ -22,6 +22,7 @@ export interface StockDTO {
   cantidad: number;
   stockMinimo: number;
   version: number;
+  productoActivo: boolean;
 }
 
 export default function Home() {
@@ -267,7 +268,9 @@ export default function Home() {
                           <td className="py-2.5 px-4 text-right">
                             <button
                               onClick={() => setIsTransferModalOpen(true)}
-                              className="px-2.5 py-1 text-zinc-400 hover:text-white hover:bg-zinc-700/80 border border-zinc-700 rounded text-[11px] font-medium transition-colors inline-flex items-center gap-1"
+                              disabled={!item.productoActivo}
+                              className="px-2.5 py-1 text-zinc-400 hover:text-white hover:bg-zinc-700/80 border border-zinc-700 rounded text-[11px] font-medium transition-colors inline-flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                              title={!item.productoActivo ? 'Producto inactivo' : 'Transferir'}
                             >
                               <ArrowRightLeft className="h-3 w-3" />
                               <span>Transferir</span>

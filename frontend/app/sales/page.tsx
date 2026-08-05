@@ -5,7 +5,8 @@ import { ProtectedRoute } from '../../components/ProtectedRoute';
 import { fetchApi, ApiError } from '../../lib/api';
 import { Search, ShoppingCart, Loader2, Database } from 'lucide-react';
 import { Navbar } from '../../components/Navbar';
-import { useAuth } from '../../lib/AuthContext';
+import { StockTransferModal } from '../../components/StockTransferModal';
+import { RegisterSaleModal } from '../../components/RegisterSaleModal';
 
 interface Venta {
   id: string;
@@ -31,6 +32,8 @@ export default function SalesHistoryPage() {
   
   const [sucursalId, setSucursalId] = useState('');
   const [productoId, setProductoId] = useState('');
+  const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
+  const [isSaleModalOpen, setIsSaleModalOpen] = useState(false);
   const [fechaInicio, setFechaInicio] = useState('');
   const [fechaFin, setFechaFin] = useState('');
   
@@ -76,8 +79,8 @@ export default function SalesHistoryPage() {
       <div className="min-h-screen bg-zinc-900 text-zinc-100 flex flex-col font-sans">
         <Navbar 
           isConnected={true} 
-          onOpenTransferModal={() => {}} 
-          onOpenSaleModal={() => {}} 
+          onOpenTransferModal={() => setIsTransferModalOpen(true)} 
+          onOpenSaleModal={() => setIsSaleModalOpen(true)} 
         />
         
         <main className="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 space-y-6">
@@ -214,6 +217,18 @@ export default function SalesHistoryPage() {
             </div>
           </section>
         </main>
+
+        <RegisterSaleModal 
+          isOpen={isSaleModalOpen} 
+          onClose={() => setIsSaleModalOpen(false)} 
+          onSuccess={handleSearch} 
+        />
+        
+        <StockTransferModal 
+          isOpen={isTransferModalOpen} 
+          onClose={() => setIsTransferModalOpen(false)} 
+          onSuccess={handleSearch} 
+        />
       </div>
     </ProtectedRoute>
   );

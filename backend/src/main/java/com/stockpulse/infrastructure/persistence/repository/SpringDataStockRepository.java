@@ -17,7 +17,7 @@ public interface SpringDataStockRepository extends JpaRepository<StockJpaEntity,
     @Query("""
         SELECT new com.stockpulse.application.dto.StockResponseDTO(
             s.id, p.id, p.sku, p.nombre, p.precio,
-            suc.id, suc.nombre, s.cantidad, p.stockMinimo, s.version
+            suc.id, suc.nombre, s.cantidad, p.stockMinimo, s.version, p.activo
         )
         FROM StockJpaEntity s
         JOIN ProductoJpaEntity p ON s.productoId = p.id

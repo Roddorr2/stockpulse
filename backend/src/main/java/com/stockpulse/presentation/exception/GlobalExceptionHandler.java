@@ -46,7 +46,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({
         InsufficientStockException.class,
         SameBranchTransferException.class,
-        InvalidTransferQuantityException.class
+        InvalidTransferQuantityException.class,
+        IllegalArgumentException.class
     })
     public ResponseEntity<ErrorResponseDTO> handleBusinessBadRequest(RuntimeException ex,
                                                                      HttpServletRequest request) {

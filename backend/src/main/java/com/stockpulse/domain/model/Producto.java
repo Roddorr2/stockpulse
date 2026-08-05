@@ -10,16 +10,18 @@ public class Producto {
     private String nombre;
     private BigDecimal precio;
     private int stockMinimo;
+    private boolean activo = true;
 
     public Producto() {
     }
 
-    public Producto(UUID id, String sku, String nombre, BigDecimal precio, int stockMinimo) {
+    public Producto(UUID id, String sku, String nombre, BigDecimal precio, int stockMinimo, boolean activo) {
         this.id = id;
         this.sku = sku;
         this.nombre = nombre;
         this.precio = precio;
         this.stockMinimo = stockMinimo;
+        this.activo = activo;
     }
 
     public UUID getId() {
@@ -60,6 +62,14 @@ public class Producto {
 
     public void setStockMinimo(int stockMinimo) {
         this.stockMinimo = stockMinimo;
+    }
+
+    public boolean isActivo() {
+        return activo;
+    }
+
+    public void setActivo(boolean activo) {
+        this.activo = activo;
     }
 
 }

@@ -8,11 +8,33 @@ export default function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
 
+  const handleBlur = (field: string) => setTouched((prev) => ({ ...prev, [field]: true }));
+
+  const getEmailError = () => {
+    if (!touched.email) return null;
+    if (!username.trim()) return 'El correo electrónico es obligatorio.';
+    if (!/\S+@\S+\.\S+/.test(username)) return 'Ingrese un correo electrónico válido.';
+    return null;
+  };
+
+  const getPasswordError = () => {
+    if (!touched.password) return null;
+    if (!password.trim()) return 'La contraseña es obligatoria.';
+    return null;
+  };
+
+  const isFormInvalid = !!getEmailError() || !!getPasswordError() || !username.trim() || !password.trim();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isFormInvalid) {
+      setTouched({ email: true, password: true });
+      return;
+    }
     setError('');
     setIsLoading(true);
 
@@ -89,10 +111,15 @@ export default function LoginPage() {
               type="email"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full bg-zinc-950 border border-zinc-800 focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 rounded-lg px-4 py-2.5 text-zinc-100 placeholder-zinc-600 outline-none transition-all text-sm"
+              onBlur={() => handleBlur('email')}
+              className={`w-full bg-zinc-950 border focus:ring-1 rounded-lg px-4 py-2.5 text-zinc-100 placeholder-zinc-600 outline-none transition-all text-sm ${
+                getEmailError()
+                  ? 'border-rose-500/80 focus:border-rose-500 focus:ring-rose-500/50'
+                  : 'border-zinc-800 focus:border-amber-500/50 focus:ring-amber-500/50'
+              }`}
               placeholder="Ej: admin@ejemplo.com"
-              required
             />
+            {getEmailError() && <p className="text-rose-400 text-xs mt-1">{getEmailError()}</p>}
           </div>
 
           <div className="space-y-1.5">
@@ -104,16 +131,21 @@ export default function LoginPage() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-zinc-950 border border-zinc-800 focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 rounded-lg px-4 py-2.5 text-zinc-100 placeholder-zinc-600 outline-none transition-all text-sm"
+              onBlur={() => handleBlur('password')}
+              className={`w-full bg-zinc-950 border focus:ring-1 rounded-lg px-4 py-2.5 text-zinc-100 placeholder-zinc-600 outline-none transition-all text-sm ${
+                getPasswordError()
+                  ? 'border-rose-500/80 focus:border-rose-500 focus:ring-rose-500/50'
+                  : 'border-zinc-800 focus:border-amber-500/50 focus:ring-amber-500/50'
+              }`}
               placeholder="••••••••"
-              required
             />
+            {getPasswordError() && <p className="text-rose-400 text-xs mt-1">{getPasswordError()}</p>}
           </div>
 
           <button
             type="submit"
-            disabled={isLoading}
-            className="w-full bg-amber-600 hover:bg-amber-500 disabled:opacity-50 disabled:hover:bg-amber-600 text-zinc-950 font-semibold py-2.5 rounded-lg transition-colors text-sm shadow-lg shadow-amber-900/20 flex items-center justify-center gap-2 mt-4"
+            disabled={isLoading || isFormInvalid}
+            className="w-full bg-amber-600 hover:bg-amber-500 disabled:opacity-50 disabled:hover:bg-amber-600 disabled:cursor-not-allowed text-zinc-950 font-semibold py-2.5 rounded-lg transition-colors text-sm shadow-lg shadow-amber-900/20 flex items-center justify-center gap-2 mt-4"
           >
             {isLoading ? 'Autenticando...' : 'Iniciar Sesión'}
           </button>

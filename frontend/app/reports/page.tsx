@@ -5,6 +5,8 @@ import { ProtectedRoute } from '../../components/ProtectedRoute';
 import { fetchApi } from '../../lib/api';
 import { BarChart3, Loader2, Database, TrendingUp, DollarSign } from 'lucide-react';
 import { Navbar } from '../../components/Navbar';
+import { StockTransferModal } from '../../components/StockTransferModal';
+import { RegisterSaleModal } from '../../components/RegisterSaleModal';
 
 interface ItemReporteStockDTO {
   productoId: string;
@@ -23,6 +25,8 @@ interface ReporteStockTotalDTO {
 export default function ReportsPage() {
   const [report, setReport] = useState<ReporteStockTotalDTO | null>(null);
   const [branches, setBranches] = useState<Array<{id: string, nombre: string}>>([]);
+  const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
+  const [isSaleModalOpen, setIsSaleModalOpen] = useState(false);
   const [sucursalId, setSucursalId] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [apiError, setApiError] = useState<string | null>(null);
@@ -31,24 +35,24 @@ export default function ReportsPage() {
     fetchApi<Array<{id: string, nombre: string}>>('/branches').then(setBranches).catch(console.error);
   }, []);
 
-  useEffect(() => {
-    const fetchReport = async () => {
-      setIsLoading(true);
-      setApiError(null);
-      try {
-        const url = sucursalId ? `/stock/report?sucursalId=${sucursalId}` : '/stock/report';
-        const data = await fetchApi<ReporteStockTotalDTO>(url);
-        setReport(data);
-      } catch (error: unknown) {
-        console.error('Failed to fetch report', error);
-        setApiError(error instanceof Error ? error.message : 'Error cargando el reporte de stock');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    
-    fetchReport();
+  const fetchReport = React.useCallback(async () => {
+    setIsLoading(true);
+    setApiError(null);
+    try {
+      const url = sucursalId ? `/stock/report?sucursalId=${sucursalId}` : '/stock/report';
+      const data = await fetchApi<ReporteStockTotalDTO>(url);
+      setReport(data);
+    } catch (error: unknown) {
+      console.error('Failed to fetch report', error);
+      setApiError(error instanceof Error ? error.message : 'Error cargando el reporte de stock');
+    } finally {
+      setIsLoading(false);
+    }
   }, [sucursalId]);
+
+  useEffect(() => {
+    fetchReport();
+  }, [fetchReport]);
 
   const formatMoney = (amount: number) => {
     return new Intl.NumberFormat('es-CO', {
@@ -64,8 +68,8 @@ export default function ReportsPage() {
       <div className="min-h-screen bg-zinc-900 text-zinc-100 flex flex-col font-sans">
         <Navbar 
           isConnected={true} 
-          onOpenTransferModal={() => {}} 
-          onOpenSaleModal={() => {}} 
+          onOpenTransferModal={() => setIsTransferModalOpen(true)} 
+          onOpenSaleModal={() => setIsSaleModalOpen(true)} 
         />
         
         <main className="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 space-y-6">
@@ -195,6 +199,18 @@ export default function ReportsPage() {
             </div>
           </section>
         </main>
+
+        <RegisterSaleModal 
+          isOpen={isSaleModalOpen} 
+          onClose={() => setIsSaleModalOpen(false)} 
+          onSuccess={fetchReport} 
+        />
+        
+        <StockTransferModal 
+          isOpen={isTransferModalOpen} 
+          onClose={() => setIsTransferModalOpen(false)} 
+          onSuccess={fetchReport} 
+        />
       </div>
     </ProtectedRoute>
   );

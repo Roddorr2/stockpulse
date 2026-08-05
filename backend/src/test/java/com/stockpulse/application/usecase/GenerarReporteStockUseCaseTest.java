@@ -44,8 +44,8 @@ class GenerarReporteStockUseCaseTest {
 
         when(stockRepository.findByFiltros(null)).thenReturn(List.of(s1, s2, s3));
 
-        Producto p1 = new Producto(productoId1, "SKU-1", "Prod 1", BigDecimal.valueOf(100), 5);
-        Producto p2 = new Producto(productoId2, "SKU-2", "Prod 2", BigDecimal.valueOf(50), 10);
+        Producto p1 = new Producto(productoId1, "SKU-1", "Prod 1", BigDecimal.valueOf(100), 5, true);
+        Producto p2 = new Producto(productoId2, "SKU-2", "Prod 2", BigDecimal.valueOf(50), 10, true);
 
         when(productoRepository.findById(productoId1)).thenReturn(Optional.of(p1));
         when(productoRepository.findById(productoId2)).thenReturn(Optional.of(p2));

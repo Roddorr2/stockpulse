@@ -46,6 +46,10 @@ public class TransferirStockUseCase {
             .orElseThrow(() -> new ResourceNotFoundException(
                 "Producto no encontrado con ID: " + request.productoId()));
 
+        if (!producto.isActivo()) {
+            throw new IllegalArgumentException("El producto " + producto.getNombre() + " se encuentra inactivo y no puede ser transferido.");
+        }
+
         Sucursal sucursalOrigen = sucursalRepository.findById(request.sucursalOrigenId())
             .orElseThrow(() -> new ResourceNotFoundException(
                 "Sucursal origen no encontrada con ID: " + request.sucursalOrigenId()));

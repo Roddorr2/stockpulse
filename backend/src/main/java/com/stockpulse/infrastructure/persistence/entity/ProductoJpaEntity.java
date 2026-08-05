@@ -26,15 +26,19 @@ public class ProductoJpaEntity {
     @Column(name = "stock_minimo", nullable = false)
     private int stockMinimo;
 
+    @Column(nullable = false)
+    private boolean activo = true;
+
     public ProductoJpaEntity() {
     }
 
-    public ProductoJpaEntity(UUID id, String sku, String nombre, BigDecimal precio, int stockMinimo) {
+    public ProductoJpaEntity(UUID id, String sku, String nombre, BigDecimal precio, int stockMinimo, boolean activo) {
         this.id = id;
         this.sku = sku;
         this.nombre = nombre;
         this.precio = precio;
         this.stockMinimo = stockMinimo;
+        this.activo = activo;
     }
 
     public UUID getId() {
@@ -75,6 +79,14 @@ public class ProductoJpaEntity {
 
     public void setStockMinimo(int stockMinimo) {
         this.stockMinimo = stockMinimo;
+    }
+
+    public boolean isActivo() {
+        return activo;
+    }
+
+    public void setActivo(boolean activo) {
+        this.activo = activo;
     }
 
 }

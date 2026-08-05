@@ -96,7 +96,7 @@ class StockTransferIntegrationTest {
         usuarioId = UUID.fromString("aaaa1111-aaaa-1111-aaaa-111111111111");
 
         // Populate database via JPA Repositories
-        productoRepository.save(new ProductoJpaEntity(productoId, "SKU-IPHONE", "iPhone 15 Pro", new BigDecimal("999.99"), 5));
+        productoRepository.save(new ProductoJpaEntity(productoId, "SKU-IPHONE", "iPhone 15 Pro", new BigDecimal("999.99"), 5, true));
         sucursalRepository.save(new SucursalJpaEntity(sucursalOrigenId, "Sucursal Central", "Av. Principal 123"));
         sucursalRepository.save(new SucursalJpaEntity(sucursalDestinoId, "Sucursal Norte", "Calle 45 #12"));
 

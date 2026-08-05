@@ -58,6 +58,10 @@ public class RegistrarVentaUseCase {
                 .orElseThrow(() -> new ResourceNotFoundException(
                     "Producto no encontrado con ID: " + item.productoId()));
 
+            if (!producto.isActivo()) {
+                throw new IllegalArgumentException("El producto " + producto.getNombre() + " se encuentra inactivo y no puede ser vendido.");
+            }
+
             Stock stock = stockRepository.findByProductoIdAndSucursalId(item.productoId(), request.sucursalId())
                 .orElseThrow(() -> new ResourceNotFoundException(
                     "No se encontró registro de stock para el producto en la sucursal seleccionada"));

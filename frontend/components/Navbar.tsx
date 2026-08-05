@@ -1,23 +1,25 @@
 'use client';
 
 import React from 'react';
-import { Activity, ArrowLeftRight, ShoppingBag, BarChart3, ShoppingCart, LogOut } from 'lucide-react';
+import { Activity, ArrowLeftRight, ShoppingBag, BarChart3, ShoppingCart, LogOut, Package, Store } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth } from '../lib/AuthContext';
 import { usePathname } from 'next/navigation';
 
 interface NavbarProps {
-  isConnected: boolean;
-  onOpenTransferModal: () => void;
-  onOpenSaleModal: () => void;
+  isConnected?: boolean;
+  onOpenTransferModal?: () => void;
+  onOpenSaleModal?: () => void;
 }
 
-export function Navbar({ isConnected, onOpenTransferModal, onOpenSaleModal }: NavbarProps) {
+export function Navbar({ isConnected = false, onOpenTransferModal, onOpenSaleModal }: NavbarProps) {
   const { isAuthenticated, user, logout } = useAuth();
   const pathname = usePathname();
 
   const isSalesActive = pathname === '/sales';
   const isReportsActive = pathname === '/reports';
+  const isProductsActive = pathname === '/admin/products';
+  const isBranchesActive = pathname === '/admin/branches';
 
   return (
     <header className="sticky top-0 z-40 border-b border-zinc-800 bg-zinc-900/95 backdrop-blur-md px-6 py-3.5">
@@ -67,6 +69,32 @@ export function Navbar({ isConnected, onOpenTransferModal, onOpenSaleModal }: Na
                   <span>Reportes</span>
                 </Link>
               )}
+              {user?.roles.includes('ADMIN') && (
+                <>
+                  <Link 
+                    href="/admin/products" 
+                    className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+                      isProductsActive 
+                        ? 'bg-zinc-800 text-amber-500' 
+                        : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50'
+                    }`}
+                  >
+                    <Package className="h-3.5 w-3.5" />
+                    <span>Productos</span>
+                  </Link>
+                  <Link 
+                    href="/admin/branches" 
+                    className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+                      isBranchesActive 
+                        ? 'bg-zinc-800 text-amber-500' 
+                        : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50'
+                    }`}
+                  >
+                    <Store className="h-3.5 w-3.5" />
+                    <span>Sucursales</span>
+                  </Link>
+                </>
+              )}
             </nav>
           )}
         </div>
@@ -95,13 +123,15 @@ export function Navbar({ isConnected, onOpenTransferModal, onOpenSaleModal }: Na
               )}
 
               {/* Primary Action: Register Sale */}
-              <button
-                onClick={onOpenSaleModal}
-                className="flex items-center gap-2 px-4 py-1.5 bg-amber-600 hover:bg-amber-500 text-zinc-950 font-semibold text-xs rounded-md transition-colors shadow-none focus:outline-none"
-              >
-                <ShoppingBag className="h-3.5 w-3.5" />
-                <span className="hidden sm:inline">Registrar Venta</span>
-              </button>
+              {onOpenSaleModal && (
+                <button
+                  onClick={onOpenSaleModal}
+                  className="flex items-center gap-2 px-4 py-1.5 bg-amber-600 hover:bg-amber-500 text-zinc-950 font-semibold text-xs rounded-md transition-colors shadow-none focus:outline-none"
+                >
+                  <ShoppingBag className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">Registrar Venta</span>
+                </button>
+              )}
 
               {/* Logout */}
               <div className="w-px h-6 bg-zinc-800 mx-1"></div>

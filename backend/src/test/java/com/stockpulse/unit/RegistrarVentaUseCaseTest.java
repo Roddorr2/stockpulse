@@ -72,7 +72,7 @@ class RegistrarVentaUseCaseTest {
 
     @Test
     void registrarVenta_exito_descuentaStockCorrectamente() {
-        Producto producto = new Producto(productoId, "SKU-1", "Laptop Pro", new BigDecimal("1000.00"), 5);
+        Producto producto = new Producto(productoId, "SKU-1", "Laptop Pro", new BigDecimal("1000.00"), 5, true);
         Stock stock = new Stock(UUID.randomUUID(), productoId, sucursalId, 10, 0L);
         RegistrarVentaRequestDTO request = new RegistrarVentaRequestDTO(
             sucursalId, usuarioId, List.of(new ItemVentaRequestDTO(productoId, 2))
@@ -95,7 +95,7 @@ class RegistrarVentaUseCaseTest {
 
     @Test
     void registrarVenta_disparaAlertaBajoStock_cuandoSaldoCaeBajoMinimo() {
-        Producto producto = new Producto(productoId, "SKU-1", "Laptop Pro", new BigDecimal("1000.00"), 5);
+        Producto producto = new Producto(productoId, "SKU-1", "Laptop Pro", new BigDecimal("1000.00"), 5, true);
         Stock stock = new Stock(UUID.randomUUID(), productoId, sucursalId, 6, 0L);
         RegistrarVentaRequestDTO request = new RegistrarVentaRequestDTO(
             sucursalId, usuarioId, List.of(new ItemVentaRequestDTO(productoId, 2))
@@ -118,7 +118,7 @@ class RegistrarVentaUseCaseTest {
 
     @Test
     void registrarVenta_lanzaExcepcion_cuandoStockEsInsuficiente() {
-        Producto producto = new Producto(productoId, "SKU-1", "Laptop Pro", new BigDecimal("1000.00"), 5);
+        Producto producto = new Producto(productoId, "SKU-1", "Laptop Pro", new BigDecimal("1000.00"), 5, true);
         Stock stock = new Stock(UUID.randomUUID(), productoId, sucursalId, 2, 0L);
         RegistrarVentaRequestDTO request = new RegistrarVentaRequestDTO(
             sucursalId, usuarioId, List.of(new ItemVentaRequestDTO(productoId, 5))

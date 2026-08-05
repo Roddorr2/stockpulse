@@ -13,6 +13,7 @@ public record StockResponseDTO(
     String nombreSucursal,
     int cantidad,
     int stockMinimo,
-    Long version
+    Long version,
+    boolean productoActivo
 ) {
 }

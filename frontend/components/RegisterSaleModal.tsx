@@ -15,6 +15,7 @@ interface ProductItem {
   sku: string;
   nombre: string;
   precio: number;
+  activo: boolean;
 }
 
 interface BranchItem {
@@ -106,7 +107,7 @@ export function RegisterSaleModal({ isOpen, onClose, onSuccess }: RegisterSaleMo
     setSuccessMsg(null);
 
     try {
-      const data = await fetchApi<any>('/sales', {
+      const data = await fetchApi<{ total: number }>('/sales', {
         method: 'POST',
         body: JSON.stringify({
           sucursalId,
@@ -127,7 +128,7 @@ export function RegisterSaleModal({ isOpen, onClose, onSuccess }: RegisterSaleMo
         onSuccess();
         onClose();
       }, 1800);
-    } catch (error: any) {
+    } catch (error: unknown) {
       if (error instanceof ApiError) {
         if (error.status === 422) {
           const branchName = selectedBranch ? selectedBranch.nombre : 'la sucursal seleccionada';
@@ -217,8 +218,8 @@ export function RegisterSaleModal({ isOpen, onClose, onSuccess }: RegisterSaleMo
                 className="w-full px-3 py-2 bg-zinc-900 border border-zinc-700 rounded-md text-xs font-medium text-zinc-200 focus:outline-none focus:border-amber-500"
               >
                 {productos.map((prod) => (
-                  <option key={prod.id} value={prod.id}>
-                    {prod.nombre} ({prod.sku}) — ${prod.precio} USD
+                  <option key={prod.id} value={prod.id} disabled={!prod.activo}>
+                    {prod.nombre} ({prod.sku}) — ${prod.precio} USD {!prod.activo ? '(Inactivo)' : ''}
                   </option>
                 ))}
               </select>

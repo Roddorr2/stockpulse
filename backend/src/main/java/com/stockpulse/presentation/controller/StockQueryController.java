@@ -55,7 +55,11 @@ public class StockQueryController {
 
     @Operation(summary = "Obtener lista de productos del catálogo")
     @GetMapping("/products")
-    public ResponseEntity<List<ProductoJpaEntity>> obtenerProductos() {
+    public ResponseEntity<List<ProductoJpaEntity>> obtenerProductos(
+            @RequestParam(required = false) String q) {
+        if (q != null && !q.trim().isEmpty()) {
+            return ResponseEntity.ok(productoRepository.searchByKeyword(q));
+        }
         return ResponseEntity.ok(productoRepository.findAll());
     }
 

@@ -16,7 +16,8 @@ public class ProductoPersistenceMapper {
             entity.getSku(),
             entity.getNombre(),
             entity.getPrecio(),
-            entity.getStockMinimo()
+            entity.getStockMinimo(),
+            entity.isActivo()
         );
     }
 
@@ -29,7 +30,8 @@ public class ProductoPersistenceMapper {
             domain.getSku(),
             domain.getNombre(),
             domain.getPrecio(),
-            domain.getStockMinimo()
+            domain.getStockMinimo(),
+            domain.isActivo()
         );
     }
 

@@ -80,7 +80,7 @@ class TransferirStockUseCaseTest {
             productoId, sucursalOrigenId, sucursalDestinoId, 10, usuarioId
         );
 
-        Producto producto = new Producto(productoId, "PROD-001", "Laptop Gaming", new BigDecimal("1200.00"), 5);
+        Producto producto = new Producto(productoId, "PROD-001", "Laptop Gaming", new BigDecimal("1200.00"), 5, true);
         Stock stockOrigen = new Stock(UUID.randomUUID(), productoId, sucursalOrigenId, 50, 1L);
         Stock stockDestino = new Stock(UUID.randomUUID(), productoId, sucursalDestinoId, 5, 1L);
 
@@ -123,7 +123,7 @@ class TransferirStockUseCaseTest {
             productoId, sucursalOrigenId, sucursalDestinoId, 45, usuarioId
         );
 
-        Producto producto = new Producto(productoId, "PROD-001", "Laptop Gaming", new BigDecimal("1200.00"), 10);
+        Producto producto = new Producto(productoId, "PROD-001", "Laptop Gaming", new BigDecimal("1200.00"), 10, true);
         Stock stockOrigen = new Stock(UUID.randomUUID(), productoId, sucursalOrigenId, 50, 1L);
         Stock stockDestino = new Stock(UUID.randomUUID(), productoId, sucursalDestinoId, 0, 1L);
 
@@ -158,7 +158,7 @@ class TransferirStockUseCaseTest {
             productoId, sucursalOrigenId, sucursalDestinoId, 100, usuarioId
         );
 
-        Producto producto = new Producto(productoId, "PROD-001", "Laptop Gaming", new BigDecimal("1200.00"), 5);
+        Producto producto = new Producto(productoId, "PROD-001", "Laptop Gaming", new BigDecimal("1200.00"), 5, true);
         Stock stockOrigen = new Stock(UUID.randomUUID(), productoId, sucursalOrigenId, 15, 1L);
 
         when(productoRepository.findById(productoId)).thenReturn(Optional.of(producto));

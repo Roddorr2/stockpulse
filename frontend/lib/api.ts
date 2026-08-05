@@ -51,7 +51,8 @@ const onRefreshed = (token: string) => {
 };
 
 export const fetchApi = async <T = unknown>(endpoint: string, options: RequestInit = {}): Promise<T> => {
-  const url = `${API_BASE_URL}${endpoint}`;
+  const cleanEndpoint = endpoint.startsWith('/api/v1') ? endpoint.substring(7) : endpoint;
+  const url = `${API_BASE_URL}${cleanEndpoint}`;
   const token = getAuthToken();
 
   const headers = new Headers(options.headers || {});
