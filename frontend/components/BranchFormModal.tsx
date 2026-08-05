@@ -61,8 +61,12 @@ export function BranchFormModal({ isOpen, onClose, onSubmit, initialData }: Bran
     try {
       await onSubmit(formData);
       onClose();
-    } catch (err: any) {
-      setError(err.message || 'Error al guardar la sucursal.');
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message || 'Error al guardar la sucursal.');
+      } else {
+        setError('Error al guardar la sucursal.');
+      }
     } finally {
       setLoading(false);
     }

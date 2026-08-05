@@ -89,8 +89,12 @@ export function ProductFormModal({ isOpen, onClose, onSubmit, initialData }: Pro
         stockMinimo: stockMinimoNum
       });
       onClose();
-    } catch (err: any) {
-      setError(err.message || 'Error al guardar el producto.');
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message || 'Error al guardar el producto.');
+      } else {
+        setError('Error al guardar el producto.');
+      }
     } finally {
       setLoading(false);
     }
