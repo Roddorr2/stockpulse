@@ -3,10 +3,11 @@
 import React, { useState, useEffect } from 'react';
 import { ProtectedRoute } from '../../components/ProtectedRoute';
 import { fetchApi, ApiError } from '../../lib/api';
-import { Search, ShoppingCart, Loader2, Database } from 'lucide-react';
+import { Search, ShoppingCart, Loader2, Database, Download } from 'lucide-react';
 import { Navbar } from '../../components/Navbar';
 import { StockTransferModal } from '../../components/StockTransferModal';
 import { RegisterSaleModal } from '../../components/RegisterSaleModal';
+import { useAuth } from '../../lib/AuthContext';
 
 interface Venta {
   id: string;
@@ -26,6 +27,7 @@ interface DetalleVenta {
 }
 
 export default function SalesHistoryPage() {
+  const { user } = useAuth();
   const [sales, setSales] = useState<Venta[]>([]);
   const [branches, setBranches] = useState<Array<{id: string, nombre: string}>>([]);
   const [products, setProducts] = useState<Array<{id: string, nombre: string, sku: string}>>([]);
@@ -38,6 +40,7 @@ export default function SalesHistoryPage() {
   const [fechaFin, setFechaFin] = useState('');
   
   const [isLoading, setIsLoading] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
 
   const handleSearch = React.useCallback(async (e?: React.FormEvent) => {
@@ -63,6 +66,44 @@ export default function SalesHistoryPage() {
       setIsLoading(false);
     }
   }, [sucursalId, productoId, fechaInicio, fechaFin]);
+
+  const handleExportCsv = async () => {
+    setIsExporting(true);
+    setApiError(null);
+    try {
+      const params = new URLSearchParams();
+      if (sucursalId) params.append('sucursalId', sucursalId);
+      if (productoId) params.append('productoId', productoId);
+      if (fechaInicio) params.append('fechaInicio', new Date(fechaInicio).toISOString());
+      if (fechaFin) params.append('fechaFin', new Date(fechaFin).toISOString());
+      
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/v1/sales/export?${params.toString()}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error('Error al exportar el historial a CSV');
+      }
+      
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'historial_ventas.csv';
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error: unknown) {
+      setApiError(error instanceof Error ? error.message : 'Error al exportar');
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   useEffect(() => {
     fetchApi<Array<{id: string, nombre: string}>>('/branches').then(setBranches).catch(() => {});
@@ -139,14 +180,28 @@ export default function SalesHistoryPage() {
               />
             </div>
             
-            <button 
-              type="submit" 
-              disabled={isLoading}
-              className="bg-amber-600 hover:bg-amber-500 disabled:opacity-50 text-zinc-950 font-semibold px-5 py-2 rounded-lg transition-colors text-sm flex items-center justify-center gap-2 h-[38px]"
-            >
-              <Search size={16} />
-              <span>Filtrar</span>
-            </button>
+            <div className="flex gap-2">
+              <button 
+                type="submit" 
+                disabled={isLoading}
+                className="bg-amber-600 hover:bg-amber-500 disabled:opacity-50 text-zinc-950 font-semibold px-5 py-2 rounded-lg transition-colors text-sm flex items-center justify-center gap-2 h-[38px]"
+              >
+                <Search size={16} />
+                <span>Filtrar</span>
+              </button>
+              
+              {user?.roles.includes('ADMIN') && (
+                <button 
+                  type="button" 
+                  onClick={handleExportCsv}
+                  disabled={isLoading || isExporting}
+                  className="bg-zinc-700 hover:bg-zinc-600 disabled:opacity-50 text-zinc-100 font-semibold px-5 py-2 rounded-lg transition-colors text-sm flex items-center justify-center gap-2 h-[38px]"
+                >
+                  {isExporting ? <Loader2 size={16} className="animate-spin" /> : <Download size={16} />}
+                  <span className="hidden sm:inline">Exportar CSV</span>
+                </button>
+              )}
+            </div>
           </form>
 
           {/* Table section */}

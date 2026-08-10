@@ -1,9 +1,11 @@
 package com.stockpulse.presentation.controller;
 
 import com.stockpulse.application.dto.FiltroVentasDTO;
+import com.stockpulse.application.dto.ItemVentaResponseDTO;
 import com.stockpulse.application.dto.RegistrarVentaRequestDTO;
 import com.stockpulse.application.dto.VentaResponseDTO;
 import com.stockpulse.application.usecase.ConsultarHistorialVentasUseCase;
+import com.stockpulse.application.usecase.ExportarHistorialVentasCsvUseCase;
 import com.stockpulse.application.usecase.RegistrarVentaUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -13,6 +15,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,11 +32,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class VentaController {
 
     private final RegistrarVentaUseCase registrarVentaUseCase;
-    private final com.stockpulse.application.usecase.ConsultarHistorialVentasUseCase consultarHistorialVentasUseCase;
+    private final ConsultarHistorialVentasUseCase consultarHistorialVentasUseCase;
+    private final ExportarHistorialVentasCsvUseCase exportarHistorialVentasCsvUseCase;
 
-    public VentaController(RegistrarVentaUseCase registrarVentaUseCase, ConsultarHistorialVentasUseCase consultarHistorialVentasUseCase) {
+    public VentaController(RegistrarVentaUseCase registrarVentaUseCase, 
+                           ConsultarHistorialVentasUseCase consultarHistorialVentasUseCase,
+                           ExportarHistorialVentasCsvUseCase exportarHistorialVentasCsvUseCase) {
         this.registrarVentaUseCase = registrarVentaUseCase;
         this.consultarHistorialVentasUseCase = consultarHistorialVentasUseCase;
+        this.exportarHistorialVentasCsvUseCase = exportarHistorialVentasCsvUseCase;
     }
 
     @Operation(summary = "Registrar una venta descontando stock automáticamente")
@@ -67,4 +74,25 @@ public class VentaController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(summary = "Exportar el historial de ventas a CSV")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Historial exportado con éxito")
+    })
+    @GetMapping("/export")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<byte[]> exportarHistorialVentasCsv(
+            @RequestParam(required = false) UUID sucursalId,
+            @RequestParam(required = false) UUID productoId,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fechaInicio,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fechaFin) {
+        
+        FiltroVentasDTO filtro = new FiltroVentasDTO(sucursalId, productoId, fechaInicio, fechaFin);
+        byte[] csvBytes = exportarHistorialVentasCsvUseCase.ejecutar(filtro);
+        
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Content-Type", "text/csv; charset=utf-8");
+        headers.set("Content-Disposition", "attachment; filename=\"historial_ventas.csv\"");
+        
+        return new ResponseEntity<>(csvBytes, headers, HttpStatus.OK);
+    }
 }
