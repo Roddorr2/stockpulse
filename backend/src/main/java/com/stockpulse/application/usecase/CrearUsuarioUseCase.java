@@ -1,5 +1,7 @@
 package com.stockpulse.application.usecase;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import com.stockpulse.application.dto.CrearUsuarioRequestDTO;
 import com.stockpulse.application.dto.UsuarioResponseDTO;
 import com.stockpulse.domain.exception.ResourceNotFoundException;
@@ -13,10 +15,12 @@ public class CrearUsuarioUseCase {
 
     private final UsuarioRepository usuarioRepository;
     private final RolRepository rolRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public CrearUsuarioUseCase(UsuarioRepository usuarioRepository, RolRepository rolRepository) {
+    public CrearUsuarioUseCase(UsuarioRepository usuarioRepository, RolRepository rolRepository, PasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
         this.rolRepository = rolRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public UsuarioResponseDTO ejecutar(CrearUsuarioRequestDTO request) {
@@ -28,9 +32,8 @@ public class CrearUsuarioUseCase {
             .orElseThrow(() -> new ResourceNotFoundException("Rol no encontrado con ID: " + request.rolId()));
 
         UUID newId = UUID.randomUUID();
-        // TODO: En producción inyectar PasswordEncoder real
-        String passwordHash = "$2a$10$20NBXeL95sz16jSrMBR7Cu7sKnDJXneuFmnwo7vWacidZYxbVUSsW";
 
+        String passwordHash = passwordEncoder.encode(request.password());
         Usuario usuario = new Usuario(newId, request.email(), passwordHash, request.nombre(), rol);
         Usuario guardado = usuarioRepository.save(usuario);
 

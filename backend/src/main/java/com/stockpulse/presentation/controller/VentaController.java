@@ -1,7 +1,6 @@
 package com.stockpulse.presentation.controller;
 
 import com.stockpulse.application.dto.FiltroVentasDTO;
-import com.stockpulse.application.dto.ItemVentaResponseDTO;
 import com.stockpulse.application.dto.RegistrarVentaRequestDTO;
 import com.stockpulse.application.dto.VentaResponseDTO;
 import com.stockpulse.application.usecase.ConsultarHistorialVentasUseCase;

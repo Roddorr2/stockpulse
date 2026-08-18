@@ -74,8 +74,8 @@ public class UseCaseConfig {
     }
 
     @Bean
-    public CrearUsuarioUseCase crearUsuarioUseCase(UsuarioRepository usuarioRepository, RolRepository rolRepository) {
-        return new CrearUsuarioUseCase(usuarioRepository, rolRepository);
+    public CrearUsuarioUseCase crearUsuarioUseCase(UsuarioRepository usuarioRepository, RolRepository rolRepository, PasswordEncoder passwordEncoder) {
+        return new CrearUsuarioUseCase(usuarioRepository, rolRepository, passwordEncoder);
     }
 
     @Bean
