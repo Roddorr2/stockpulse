@@ -8,4 +8,5 @@ public record ProductoRequestDTO(
     BigDecimal precio,
     int stockMinimo,
     boolean activo
-) {}
+) {
+}
