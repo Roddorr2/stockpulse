@@ -22,13 +22,13 @@ export function Navbar({ isConnected = false, onOpenTransferModal, onOpenSaleMod
   const isBranchesActive = pathname === '/admin/branches';
 
   return (
-    <header className="sticky top-0 z-40 border-b border-zinc-800 bg-zinc-900/95 backdrop-blur-md px-6 py-3.5">
+    <header role="banner" className="sticky top-0 z-40 border-b border-zinc-800 bg-zinc-900/95 backdrop-blur-md px-6 py-3.5">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         {/* Brand Logo & Title */}
         <div className="flex items-center gap-8">
-          <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+          <Link href="/" aria-label="Ir a la página principal de StockPulse" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
             <div className="h-9 w-9 rounded-md bg-amber-600/10 border border-amber-600/20 flex items-center justify-center text-amber-500 font-bold">
-              <Activity className="h-4 w-4" />
+              <Activity className="h-4 w-4" aria-hidden="true" />
             </div>
             <div>
               <div className="flex items-center gap-2">
@@ -43,29 +43,31 @@ export function Navbar({ isConnected = false, onOpenTransferModal, onOpenSaleMod
 
           {/* Navigation Links for Authenticated Users */}
           {isAuthenticated && (
-            <nav className="hidden md:flex items-center gap-1 bg-zinc-950/50 p-1 rounded-lg border border-zinc-800/80">
+            <nav aria-label="Navegación principal" className="hidden md:flex items-center gap-1 bg-zinc-950/50 p-1 rounded-lg border border-zinc-800/80">
               <Link 
                 href="/sales" 
+                aria-label="Ir a gestión de Ventas"
                 className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
                   isSalesActive 
                     ? 'bg-zinc-800 text-amber-500' 
                     : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50'
                 }`}
               >
-                <ShoppingCart className="h-3.5 w-3.5" />
+                <ShoppingCart className="h-3.5 w-3.5" aria-hidden="true" />
                 <span>Ventas</span>
               </Link>
               
               {user?.roles.includes('ADMIN') && (
                 <Link 
                   href="/reports" 
+                  aria-label="Ir a módulo de Reportes"
                   className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
                     isReportsActive 
                       ? 'bg-zinc-800 text-emerald-500' 
                       : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50'
                   }`}
                 >
-                  <BarChart3 className="h-3.5 w-3.5" />
+                  <BarChart3 className="h-3.5 w-3.5" aria-hidden="true" />
                   <span>Reportes</span>
                 </Link>
               )}
@@ -73,24 +75,26 @@ export function Navbar({ isConnected = false, onOpenTransferModal, onOpenSaleMod
                 <>
                   <Link 
                     href="/admin/products" 
+                    aria-label="Ir a administración de Productos"
                     className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
                       isProductsActive 
                         ? 'bg-zinc-800 text-amber-500' 
                         : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50'
                     }`}
                   >
-                    <Package className="h-3.5 w-3.5" />
+                    <Package className="h-3.5 w-3.5" aria-hidden="true" />
                     <span>Productos</span>
                   </Link>
                   <Link 
                     href="/admin/branches" 
+                    aria-label="Ir a administración de Sucursales"
                     className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
                       isBranchesActive 
                         ? 'bg-zinc-800 text-amber-500' 
                         : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50'
                     }`}
                   >
-                    <Store className="h-3.5 w-3.5" />
+                    <Store className="h-3.5 w-3.5" aria-hidden="true" />
                     <span>Sucursales</span>
                   </Link>
                 </>
@@ -102,8 +106,8 @@ export function Navbar({ isConnected = false, onOpenTransferModal, onOpenSaleMod
         {/* Real-time Status Indicator & Actions */}
         <div className="flex items-center gap-3">
           {/* Live Sync Status */}
-          <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-md border border-zinc-800 bg-zinc-900 text-xs font-mono">
-            <span className={`h-2 w-2 rounded-full ${isConnected ? 'bg-emerald-500' : 'bg-zinc-600'}`} />
+          <div aria-label={`Estado de conexión: ${isConnected ? 'Sincronizado' : 'Desconectado'}`} className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-md border border-zinc-800 bg-zinc-900 text-xs font-mono">
+            <span className={`h-2 w-2 rounded-full ${isConnected ? 'bg-emerald-500' : 'bg-zinc-600'}`} aria-hidden="true" />
             <span className="text-zinc-400">
               {isConnected ? 'Sincronizado' : 'Desconectado'}
             </span>
@@ -115,9 +119,10 @@ export function Navbar({ isConnected = false, onOpenTransferModal, onOpenSaleMod
               {(user?.roles.includes('ADMIN') || user?.roles.includes('ENCARGADO_SUCURSAL')) && (
                 <button
                   onClick={onOpenTransferModal}
+                  aria-label="Abrir formulario de transferencia de stock"
                   className="hidden lg:flex items-center gap-2 px-3.5 py-1.5 bg-transparent hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs font-medium rounded-md border border-zinc-700 transition-colors focus:outline-none"
                 >
-                  <ArrowLeftRight className="h-3.5 w-3.5 text-zinc-400" />
+                  <ArrowLeftRight className="h-3.5 w-3.5 text-zinc-400" aria-hidden="true" />
                   <span>Transferir Stock</span>
                 </button>
               )}
@@ -126,26 +131,29 @@ export function Navbar({ isConnected = false, onOpenTransferModal, onOpenSaleMod
               {onOpenSaleModal && (
                 <button
                   onClick={onOpenSaleModal}
+                  aria-label="Abrir formulario de registro de venta"
                   className="flex items-center gap-2 px-4 py-1.5 bg-amber-600 hover:bg-amber-500 text-zinc-950 font-semibold text-xs rounded-md transition-colors shadow-none focus:outline-none"
                 >
-                  <ShoppingBag className="h-3.5 w-3.5" />
+                  <ShoppingBag className="h-3.5 w-3.5" aria-hidden="true" />
                   <span className="hidden sm:inline">Registrar Venta</span>
                 </button>
               )}
 
               {/* Logout */}
-              <div className="w-px h-6 bg-zinc-800 mx-1"></div>
+              <div className="w-px h-6 bg-zinc-800 mx-1" aria-hidden="true"></div>
               <button
                 onClick={logout}
                 title="Cerrar sesión"
+                aria-label="Cerrar sesión de usuario"
                 className="p-1.5 text-zinc-400 hover:text-rose-400 hover:bg-rose-400/10 rounded-md transition-colors flex items-center justify-center"
               >
-                <LogOut className="h-4 w-4" />
+                <LogOut className="h-4 w-4" aria-hidden="true" />
               </button>
             </>
           ) : (
             <Link 
               href="/login"
+              aria-label="Ir a inicio de sesión"
               className="flex items-center gap-2 px-4 py-1.5 bg-zinc-100 hover:bg-white text-zinc-950 font-semibold text-xs rounded-md transition-colors"
             >
               Iniciar Sesión

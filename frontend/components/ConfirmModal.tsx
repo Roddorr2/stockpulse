@@ -14,27 +14,40 @@ export function ConfirmModal({ isOpen, onClose, onConfirm, title, message }: Con
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div className="bg-zinc-900 border border-zinc-800 rounded-xl shadow-2xl w-full max-w-sm overflow-hidden">
+      <div 
+        role="alertdialog" 
+        aria-modal="true" 
+        aria-labelledby="confirm-modal-title" 
+        aria-describedby="confirm-modal-desc" 
+        className="bg-zinc-900 border border-zinc-800 rounded-xl shadow-2xl w-full max-w-sm overflow-hidden"
+      >
         <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-800">
-          <h2 className="text-lg font-semibold text-zinc-100 flex items-center gap-2">
-            <AlertTriangle className="h-5 w-5 text-amber-500" />
+          <h2 id="confirm-modal-title" className="text-lg font-semibold text-zinc-100 flex items-center gap-2">
+            <AlertTriangle className="h-5 w-5 text-amber-500" aria-hidden="true" />
             {title}
           </h2>
-          <button onClick={onClose} className="text-zinc-400 hover:text-white transition-colors">
-            <X className="h-5 w-5" />
+          <button 
+            type="button" 
+            onClick={onClose} 
+            aria-label="Cerrar diálogo de confirmación" 
+            className="text-zinc-400 hover:text-white transition-colors"
+          >
+            <X className="h-5 w-5" aria-hidden="true" />
           </button>
         </div>
         <div className="p-6">
-          <p className="text-sm text-zinc-300">{message}</p>
+          <p id="confirm-modal-desc" className="text-sm text-zinc-300">{message}</p>
         </div>
         <div className="px-6 py-4 border-t border-zinc-800 flex justify-end gap-3 bg-zinc-950/50">
           <button
+            type="button"
             onClick={onClose}
             className="px-4 py-2 text-sm font-medium text-zinc-400 hover:text-white transition-colors"
           >
             Cancelar
           </button>
           <button
+            type="button"
             onClick={() => {
               onConfirm();
               onClose();
