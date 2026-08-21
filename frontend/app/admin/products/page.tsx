@@ -125,13 +125,15 @@ export default function AdminProductsPage() {
               placeholder="Buscar por SKU o Nombre..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              aria-label="Buscar producto por SKU o Nombre"
               className="bg-zinc-900 border border-zinc-800 rounded-lg px-4 py-2 text-sm text-zinc-200 focus:outline-none focus:border-amber-500 w-full sm:w-64"
             />
             <button
               onClick={openCreateModal}
+              aria-label="Abrir formulario para crear nuevo producto"
               className="flex items-center justify-center gap-2 px-4 py-2 bg-amber-600 hover:bg-amber-500 text-zinc-950 font-bold text-sm rounded-lg transition-colors whitespace-nowrap"
             >
-              <Plus className="h-4 w-4" />
+              <Plus className="h-4 w-4" aria-hidden="true" />
               Nuevo Producto
             </button>
         </div>
@@ -139,15 +141,15 @@ export default function AdminProductsPage() {
 
       <div className="bg-zinc-800 border border-zinc-700/80 rounded-xl overflow-hidden mt-6">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs text-zinc-300">
+          <table aria-label="Catálogo de productos de inventario" className="w-full text-left text-xs text-zinc-300">
             <thead className="bg-zinc-900 border-b border-zinc-700 text-zinc-400 uppercase font-mono tracking-wider text-[10px]">
               <tr>
-                <th className="py-3 px-5 font-medium">SKU</th>
-                <th className="py-3 px-5 font-medium">Nombre</th>
-                <th className="py-3 px-5 font-medium text-right">Precio</th>
-                <th className="py-3 px-5 font-medium text-right">Stock Mín.</th>
-                <th className="py-3 px-5 font-medium text-center">Estado</th>
-                <th className="py-3 px-5 font-medium text-right">Acciones</th>
+                <th scope="col" className="py-3 px-5 font-medium">SKU</th>
+                <th scope="col" className="py-3 px-5 font-medium">Nombre</th>
+                <th scope="col" className="py-3 px-5 font-medium text-right">Precio</th>
+                <th scope="col" className="py-3 px-5 font-medium text-right">Stock Mín.</th>
+                <th scope="col" className="py-3 px-5 font-medium text-center">Estado</th>
+                <th scope="col" className="py-3 px-5 font-medium text-right">Acciones</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-700/60">
@@ -167,12 +169,12 @@ export default function AdminProductsPage() {
                     <td className="py-3 px-5 text-center">
                       {product.activo ? (
                         <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                          <CheckCircle2 className="h-3.5 w-3.5" />
+                          <CheckCircle2 className="h-3.5 w-3.5" aria-hidden="true" />
                           Activo
                         </span>
                       ) : (
                         <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium bg-zinc-500/10 text-zinc-400 border border-zinc-500/20">
-                          <Ban className="h-3.5 w-3.5" />
+                          <Ban className="h-3.5 w-3.5" aria-hidden="true" />
                           Inactivo
                         </span>
                       )}
@@ -181,18 +183,20 @@ export default function AdminProductsPage() {
                       <div className="flex items-center justify-end gap-2">
                         <button
                           onClick={() => openEditModal(product)}
+                          aria-label={`Editar producto ${product.nombre}`}
                           className="p-1.5 text-zinc-400 hover:text-amber-400 hover:bg-amber-400/10 rounded-md transition-colors"
                           title="Editar"
                         >
-                          <Edit2 className="h-4 w-4" />
+                          <Edit2 className="h-4 w-4" aria-hidden="true" />
                         </button>
                         {product.activo && (
                           <button
                             onClick={() => setDeactivateId(product.id)}
+                            aria-label={`Desactivar producto ${product.nombre}`}
                             className="p-1.5 text-zinc-400 hover:text-rose-400 hover:bg-rose-400/10 rounded-md transition-colors"
                             title="Desactivar"
                           >
-                            <Ban className="h-4 w-4" />
+                            <Ban className="h-4 w-4" aria-hidden="true" />
                           </button>
                         )}
                       </div>

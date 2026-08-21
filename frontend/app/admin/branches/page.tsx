@@ -98,21 +98,22 @@ export default function AdminBranchesPage() {
             
             <button
               onClick={openCreateModal}
+              aria-label="Abrir formulario para crear nueva sucursal"
               className="flex items-center justify-center gap-2 px-4 py-2 bg-amber-600 hover:bg-amber-500 text-zinc-950 font-bold text-sm rounded-lg transition-colors whitespace-nowrap"
             >
-              <Plus className="h-4 w-4" />
+              <Plus className="h-4 w-4" aria-hidden="true" />
               Nueva Sucursal
             </button>
           </div>
 
       <div className="bg-zinc-800 border border-zinc-700/80 rounded-xl overflow-hidden mt-6">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs text-zinc-300">
+          <table aria-label="Lista de sucursales operativas" className="w-full text-left text-xs text-zinc-300">
             <thead className="bg-zinc-900 border-b border-zinc-700 text-zinc-400 uppercase font-mono tracking-wider text-[10px]">
               <tr>
-                <th className="py-3 px-5 font-medium">Nombre</th>
-                <th className="py-3 px-5 font-medium">Dirección</th>
-                <th className="py-3 px-5 font-medium text-right">Acciones</th>
+                <th scope="col" className="py-3 px-5 font-medium">Nombre</th>
+                <th scope="col" className="py-3 px-5 font-medium">Dirección</th>
+                <th scope="col" className="py-3 px-5 font-medium text-right">Acciones</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-700/60">
@@ -131,10 +132,11 @@ export default function AdminBranchesPage() {
                       <div className="flex items-center justify-end gap-2">
                         <button
                           onClick={() => openEditModal(branch)}
+                          aria-label={`Editar sucursal ${branch.nombre}`}
                           className="p-1.5 text-zinc-400 hover:text-amber-400 hover:bg-amber-400/10 rounded-md transition-colors"
                           title="Editar"
                         >
-                          <Edit2 className="h-4 w-4" />
+                          <Edit2 className="h-4 w-4" aria-hidden="true" />
                         </button>
                       </div>
                     </td>

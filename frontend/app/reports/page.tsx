@@ -75,13 +75,15 @@ export default function ReportsPage() {
         <main className="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 space-y-6">
           <div className="flex items-center justify-between flex-wrap gap-4 mb-2">
             <div className="flex items-center gap-2">
-              <BarChart3 className="h-5 w-5 text-amber-500" />
+              <BarChart3 className="h-5 w-5 text-amber-500" aria-hidden="true" />
               <h1 className="text-xl font-bold text-zinc-100 tracking-tight">Reporte de Inventario</h1>
             </div>
             
             <div className="flex items-center gap-3">
-              <label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Filtrar por Sucursal:</label>
+              <label htmlFor="report-branch-select" className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Filtrar por Sucursal:</label>
               <select 
+                id="report-branch-select"
+                aria-label="Filtrar reporte por sucursal"
                 className="bg-zinc-900 border border-zinc-700 focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 rounded-lg px-3 py-1.5 text-zinc-100 outline-none transition-all text-sm w-48"
                 value={sucursalId} 
                 onChange={e => setSucursalId(e.target.value)}
@@ -98,13 +100,13 @@ export default function ReportsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="bg-zinc-800 border border-zinc-700/80 rounded-xl p-5 flex flex-col justify-between">
               <div className="flex items-center gap-2 text-zinc-400 mb-3">
-                <DollarSign className="h-4 w-4 text-emerald-500" />
+                <DollarSign className="h-4 w-4 text-emerald-500" aria-hidden="true" />
                 <span className="text-xs font-semibold uppercase tracking-wider">Valor Global Inmovilizado</span>
               </div>
               
               {isLoading && !report ? (
                 <div className="h-10 flex items-center">
-                  <Loader2 className="h-5 w-5 text-emerald-500 animate-spin" />
+                  <Loader2 className="h-5 w-5 text-emerald-500 animate-spin" aria-hidden="true" />
                 </div>
               ) : apiError ? (
                 <div className="text-rose-400 text-sm font-medium h-10 flex items-center">
@@ -119,13 +121,13 @@ export default function ReportsPage() {
             
             <div className="bg-zinc-800 border border-zinc-700/80 rounded-xl p-5 flex flex-col justify-between">
               <div className="flex items-center gap-2 text-zinc-400 mb-3">
-                <TrendingUp className="h-4 w-4 text-amber-500" />
+                <TrendingUp className="h-4 w-4 text-amber-500" aria-hidden="true" />
                 <span className="text-xs font-semibold uppercase tracking-wider">Productos en Catálogo</span>
               </div>
               
               {isLoading && !report ? (
                 <div className="h-10 flex items-center">
-                  <Loader2 className="h-5 w-5 text-amber-500 animate-spin" />
+                  <Loader2 className="h-5 w-5 text-amber-500 animate-spin" aria-hidden="true" />
                 </div>
               ) : apiError ? (
                 <div className="text-rose-400 text-sm font-medium h-10 flex items-center">
@@ -142,28 +144,28 @@ export default function ReportsPage() {
           {/* Table section */}
           <section className="bg-zinc-800 border border-zinc-700/80 rounded-xl overflow-hidden mt-6">
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs text-zinc-300">
+              <table aria-label="Reporte valorizado de inventario por producto" className="w-full text-left text-xs text-zinc-300">
                 <thead className="bg-zinc-900 border-b border-zinc-700 text-zinc-400 uppercase font-mono tracking-wider text-[10px]">
                   <tr>
-                    <th className="py-3 px-5">SKU</th>
-                    <th className="py-3 px-5">Producto</th>
-                    <th className="py-3 px-5 text-right">Cantidad Total</th>
-                    <th className="py-3 px-5 text-right">Precio Base</th>
-                    <th className="py-3 px-5 text-right">Total Inmovilizado</th>
+                    <th scope="col" className="py-3 px-5">SKU</th>
+                    <th scope="col" className="py-3 px-5">Producto</th>
+                    <th scope="col" className="py-3 px-5 text-right">Cantidad Total</th>
+                    <th scope="col" className="py-3 px-5 text-right">Precio Base</th>
+                    <th scope="col" className="py-3 px-5 text-right">Total Inmovilizado</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-zinc-700/60">
                   {isLoading && !report ? (
                     <tr>
                       <td colSpan={5} className="py-12 text-center">
-                        <Loader2 className="h-6 w-6 text-amber-500 animate-spin mx-auto mb-2" />
+                        <Loader2 className="h-6 w-6 text-amber-500 animate-spin mx-auto mb-2" aria-hidden="true" />
                         <span className="text-zinc-500 font-mono">Generando reporte...</span>
                       </td>
                     </tr>
                   ) : apiError ? (
                     <tr>
                       <td colSpan={5} className="py-12 text-center text-rose-400">
-                        <Database className="h-6 w-6 mx-auto mb-2 opacity-50" />
+                        <Database className="h-6 w-6 mx-auto mb-2 opacity-50" aria-hidden="true" />
                         <span>{apiError}</span>
                       </td>
                     </tr>

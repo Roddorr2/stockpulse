@@ -13,15 +13,17 @@ export function AlertToastContainer({ alerts, onDismiss }: AlertToastContainerPr
   if (alerts.length === 0) return null;
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-3 max-w-sm w-full">
+    <div role="region" aria-label="Notificaciones de alertas de stock" className="fixed bottom-6 right-6 z-50 flex flex-col gap-3 max-w-sm w-full">
       {alerts.map((alert, index) => (
         <div
           key={`${alert.productoId}-${alert.timestamp}-${index}`}
+          role="alert"
+          aria-live="polite"
           className="relative bg-zinc-800 border border-zinc-700 border-l-4 border-l-amber-500 rounded-lg p-4 shadow-xl text-zinc-100 backdrop-blur-md transition-all duration-300"
         >
           <div className="flex items-start gap-3">
             <div className="p-1.5 rounded bg-amber-500/10 text-amber-500 shrink-0 border border-amber-500/20">
-              <AlertTriangle className="h-4 w-4" />
+              <AlertTriangle className="h-4 w-4" aria-hidden="true" />
             </div>
 
             <div className="flex-1 space-y-1">
@@ -43,9 +45,10 @@ export function AlertToastContainer({ alerts, onDismiss }: AlertToastContainerPr
 
             <button
               onClick={() => onDismiss(index)}
+              aria-label={`Descartar notificación de stock crítico para ${alert.nombreProducto}`}
               className="text-zinc-400 hover:text-zinc-200 transition-colors p-1"
             >
-              <X className="h-4 w-4" />
+              <X className="h-4 w-4" aria-hidden="true" />
             </button>
           </div>
         </div>

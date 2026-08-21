@@ -74,27 +74,38 @@ export function BranchFormModal({ isOpen, onClose, onSubmit, initialData }: Bran
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div className="bg-zinc-900 border border-zinc-800 rounded-xl shadow-2xl w-full max-w-md overflow-hidden">
+      <div 
+        role="dialog" 
+        aria-modal="true" 
+        aria-labelledby="branch-form-title" 
+        className="bg-zinc-900 border border-zinc-800 rounded-xl shadow-2xl w-full max-w-md overflow-hidden"
+      >
         <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-800">
-          <h2 className="text-lg font-semibold text-zinc-100">
+          <h2 id="branch-form-title" className="text-lg font-semibold text-zinc-100">
             {initialData ? 'Editar Sucursal' : 'Nueva Sucursal'}
           </h2>
-          <button onClick={onClose} className="text-zinc-400 hover:text-white transition-colors">
-            <X className="h-5 w-5" />
+          <button 
+            type="button"
+            onClick={onClose} 
+            aria-label="Cerrar modal de formulario de sucursal" 
+            className="text-zinc-400 hover:text-white transition-colors"
+          >
+            <X className="h-5 w-5" aria-hidden="true" />
           </button>
         </div>
 
         <form onSubmit={handleSubmit} noValidate className="p-6 space-y-4">
           {error && (
-            <div className="p-3 bg-rose-500/10 border border-rose-500/20 rounded-lg flex items-start gap-2 text-rose-400 text-sm">
-              <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
+            <div role="alert" className="p-3 bg-rose-500/10 border border-rose-500/20 rounded-lg flex items-start gap-2 text-rose-400 text-sm">
+              <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" aria-hidden="true" />
               <p>{error}</p>
             </div>
           )}
 
           <div>
-            <label className="block text-xs font-medium text-zinc-400 mb-1">Nombre</label>
+            <label htmlFor="branch-nombre" className="block text-xs font-medium text-zinc-400 mb-1">Nombre</label>
             <input
+              id="branch-nombre"
               type="text"
               value={formData.nombre}
               onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
@@ -106,8 +117,9 @@ export function BranchFormModal({ isOpen, onClose, onSubmit, initialData }: Bran
             {getFieldError('nombre') && <p className="text-rose-400 text-[10px] mt-1">{getFieldError('nombre')}</p>}
           </div>
           <div>
-            <label className="block text-xs font-medium text-zinc-400 mb-1">Dirección</label>
+            <label htmlFor="branch-direccion" className="block text-xs font-medium text-zinc-400 mb-1">Dirección</label>
             <input
+              id="branch-direccion"
               type="text"
               value={formData.direccion}
               onChange={(e) => setFormData({ ...formData, direccion: e.target.value })}

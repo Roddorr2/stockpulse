@@ -151,51 +151,59 @@ export function RegisterSaleModal({ isOpen, onClose, onSuccess }: RegisterSaleMo
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/80 backdrop-blur-sm p-4">
-      <div className="w-full max-w-lg bg-zinc-800 border border-zinc-700 rounded-xl p-6 shadow-xl space-y-5">
+      <div 
+        role="dialog" 
+        aria-modal="true" 
+        aria-labelledby="sale-modal-title" 
+        className="w-full max-w-lg bg-zinc-800 border border-zinc-700 rounded-xl p-6 shadow-xl space-y-5"
+      >
         {/* Header */}
         <div className="flex items-center justify-between border-b border-zinc-700/80 pb-3.5">
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-lg bg-amber-600/10 text-amber-500 border border-amber-600/20">
-              <ShoppingBag className="h-4 w-4" />
+              <ShoppingBag className="h-4 w-4" aria-hidden="true" />
             </div>
             <div>
-              <h2 className="font-bold text-zinc-100 text-sm">Registrar Venta (Caja)</h2>
+              <h2 id="sale-modal-title" className="font-bold text-zinc-100 text-sm">Registrar Venta (Caja)</h2>
               <p className="text-[11px] text-zinc-400">Descuento automático de inventario en sucursal</p>
             </div>
           </div>
           <button
+            type="button"
             onClick={onClose}
+            aria-label="Cerrar modal de registro de venta"
             className="p-1 rounded-md text-zinc-400 hover:text-zinc-200 hover:bg-zinc-700 transition-colors"
           >
-            <X className="h-4 w-4" />
+            <X className="h-4 w-4" aria-hidden="true" />
           </button>
         </div>
 
         {/* Alerts */}
         {errorMsg && (
-          <div className="p-3 rounded-lg bg-rose-950/40 border border-rose-800/50 text-rose-300 text-xs flex items-start gap-2">
-            <ShieldAlert className="h-4 w-4 text-rose-400 shrink-0 mt-0.5" />
+          <div role="alert" className="p-3 rounded-lg bg-rose-950/40 border border-rose-800/50 text-rose-300 text-xs flex items-start gap-2">
+            <ShieldAlert className="h-4 w-4 text-rose-400 shrink-0 mt-0.5" aria-hidden="true" />
             <span>{errorMsg}</span>
           </div>
         )}
 
         {successMsg && (
-          <div className="p-3 rounded-lg bg-emerald-950/40 border border-emerald-800/50 text-emerald-300 text-xs flex items-start gap-2">
-            <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
+          <div role="status" className="p-3 rounded-lg bg-emerald-950/40 border border-emerald-800/50 text-emerald-300 text-xs flex items-start gap-2">
+            <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" aria-hidden="true" />
             <span>{successMsg}</span>
           </div>
         )}
 
         {loadingData ? (
           <div className="py-12 flex flex-col items-center justify-center gap-3 text-zinc-400 text-xs">
-            <RefreshCw className="h-5 w-5 animate-spin text-amber-500" />
+            <RefreshCw className="h-5 w-5 animate-spin text-amber-500" aria-hidden="true" />
             <span>Cargando catálogo e inventario de sucursales...</span>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-medium text-zinc-300 mb-1">Sucursal Vendedora</label>
+              <label htmlFor="sale-branch-select" className="block text-xs font-medium text-zinc-300 mb-1">Sucursal Vendedora</label>
               <select
+                id="sale-branch-select"
                 value={sucursalId}
                 onChange={(e) => setSucursalId(e.target.value)}
                 required
@@ -210,8 +218,9 @@ export function RegisterSaleModal({ isOpen, onClose, onSuccess }: RegisterSaleMo
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-zinc-300 mb-1">Producto a Vender</label>
+              <label htmlFor="sale-product-select" className="block text-xs font-medium text-zinc-300 mb-1">Producto a Vender</label>
               <select
+                id="sale-product-select"
                 value={productoId}
                 onChange={(e) => setProductoId(e.target.value)}
                 required
@@ -227,7 +236,7 @@ export function RegisterSaleModal({ isOpen, onClose, onSuccess }: RegisterSaleMo
 
             {/* Live Available Stock Badge */}
             {stockDisponible !== null && (
-              <div className="px-3 py-2 bg-zinc-900 border border-zinc-700/80 rounded-md flex items-center justify-between text-xs font-mono">
+              <div aria-label={`Stock disponible: ${stockDisponible} unidades`} className="px-3 py-2 bg-zinc-900 border border-zinc-700/80 rounded-md flex items-center justify-between text-xs font-mono">
                 <span className="text-zinc-400">Stock disponible en esta sucursal:</span>
                 <span
                   className={`font-bold font-mono px-2 py-0.5 rounded ${
@@ -243,8 +252,9 @@ export function RegisterSaleModal({ isOpen, onClose, onSuccess }: RegisterSaleMo
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-medium text-zinc-300 mb-1">Cantidad a Vender</label>
+                <label htmlFor="sale-quantity-input" className="block text-xs font-medium text-zinc-300 mb-1">Cantidad a Vender</label>
                 <input
+                  id="sale-quantity-input"
                   type="number"
                   min="1"
                   max={stockDisponible !== null ? stockDisponible : undefined}
@@ -269,8 +279,8 @@ export function RegisterSaleModal({ isOpen, onClose, onSuccess }: RegisterSaleMo
 
             {/* Client Reactive Validation Banner */}
             {isExceedingStock && (
-              <div className="p-2.5 rounded-md bg-rose-950/40 border border-rose-800/50 text-rose-300 text-xs flex items-center gap-2">
-                <AlertTriangle className="h-4 w-4 text-rose-400 shrink-0" />
+              <div role="alert" className="p-2.5 rounded-md bg-rose-950/40 border border-rose-800/50 text-rose-300 text-xs flex items-center gap-2">
+                <AlertTriangle className="h-4 w-4 text-rose-400 shrink-0" aria-hidden="true" />
                 <span>
                   La cantidad a vender ({cantidad}) supera las {stockDisponible} unidades disponibles en {selectedBranch?.nombre || 'esta sucursal'}.
                 </span>

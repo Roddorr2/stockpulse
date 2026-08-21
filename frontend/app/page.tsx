@@ -172,10 +172,11 @@ export default function Home() {
               <button
                 onClick={fetchStockMatrix}
                 disabled={loading}
+                aria-label="Actualizar datos de inventario"
                 className="p-1.5 bg-zinc-900 hover:bg-zinc-700 disabled:opacity-50 text-zinc-400 hover:text-zinc-200 border border-zinc-700 rounded-md transition-colors text-xs flex items-center gap-1.5"
                 title="Actualizar datos"
               >
-                {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin text-amber-500" /> : <RefreshCw className="h-3.5 w-3.5" />}
+                {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin text-amber-500" aria-hidden="true" /> : <RefreshCw className="h-3.5 w-3.5" aria-hidden="true" />}
               </button>
             </div>
           </div>
@@ -183,24 +184,25 @@ export default function Home() {
           {/* Loading State */}
           {loading && (
             <div className="py-16 text-center space-y-3">
-              <Loader2 className="h-7 w-7 text-amber-500 animate-spin mx-auto" />
+              <Loader2 className="h-7 w-7 text-amber-500 animate-spin mx-auto" aria-hidden="true" />
               <p className="text-xs font-mono text-zinc-400">Cargando datos de inventario...</p>
             </div>
           )}
 
           {/* Error State */}
           {apiError && !loading && (
-            <div className="py-10 px-4 rounded-lg bg-zinc-900 border border-zinc-700 text-center space-y-3">
-              <Database className="h-7 w-7 text-zinc-500 mx-auto" />
+            <div role="alert" className="py-10 px-4 rounded-lg bg-zinc-900 border border-zinc-700 text-center space-y-3">
+              <Database className="h-7 w-7 text-zinc-500 mx-auto" aria-hidden="true" />
               <div className="space-y-1">
                 <p className="text-xs font-semibold text-zinc-300">Servidor no disponible</p>
                 <p className="text-[11px] text-zinc-500 max-w-md mx-auto">{apiError}</p>
               </div>
               <button
                 onClick={fetchStockMatrix}
+                aria-label="Reintentar cargar matriz de inventario"
                 className="px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-zinc-700 font-medium text-xs rounded-md transition-colors inline-flex items-center gap-1.5"
               >
-                <RefreshCw className="h-3.5 w-3.5 text-amber-500" />
+                <RefreshCw className="h-3.5 w-3.5 text-amber-500" aria-hidden="true" />
                 <span>Reintentar</span>
               </button>
             </div>
@@ -209,16 +211,16 @@ export default function Home() {
           {/* Operational Data Table with Side-Border Status Indicators & Neutral SKU styling */}
           {!loading && !apiError && stocks.length > 0 && (
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs text-zinc-300">
+              <table aria-label="Matriz de inventario en tiempo real por sucursal" className="w-full text-left text-xs text-zinc-300">
                 <thead className="bg-zinc-900 border-b border-zinc-700 text-zinc-400 uppercase font-mono tracking-wider text-[10px]">
                   <tr>
-                    <th className="py-2.5 px-4">SKU</th>
-                    <th className="py-2.5 px-4">Producto</th>
-                    <th className="py-2.5 px-4">Sucursal</th>
-                    <th className="py-2.5 px-4 text-center">Stock Actual</th>
-                    <th className="py-2.5 px-4 text-center">Stock Mínimo</th>
-                    <th className="py-2.5 px-4 text-center">Estado</th>
-                    {canTransfer && <th className="py-2.5 px-4 text-right">Acción</th>}
+                    <th scope="col" className="py-2.5 px-4">SKU</th>
+                    <th scope="col" className="py-2.5 px-4">Producto</th>
+                    <th scope="col" className="py-2.5 px-4">Sucursal</th>
+                    <th scope="col" className="py-2.5 px-4 text-center">Stock Actual</th>
+                    <th scope="col" className="py-2.5 px-4 text-center">Stock Mínimo</th>
+                    <th scope="col" className="py-2.5 px-4 text-center">Estado</th>
+                    {canTransfer && <th scope="col" className="py-2.5 px-4 text-right">Acción</th>}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-zinc-700/60">
@@ -248,17 +250,17 @@ export default function Home() {
                         <td className="py-2.5 px-4 text-center font-medium">
                           {isOutOfStock ? (
                             <span className="inline-flex items-center text-[11px] text-rose-400 font-mono">
-                              <span className="h-1.5 w-1.5 rounded-full bg-rose-500 mr-1.5" />
+                              <span className="h-1.5 w-1.5 rounded-full bg-rose-500 mr-1.5" aria-hidden="true" />
                               Agotado
                             </span>
                           ) : isLowStock ? (
                             <span className="inline-flex items-center text-[11px] text-amber-400 font-mono">
-                              <span className="h-1.5 w-1.5 rounded-full bg-amber-400 mr-1.5 animate-pulse" />
+                              <span className="h-1.5 w-1.5 rounded-full bg-amber-400 mr-1.5 animate-pulse" aria-hidden="true" />
                               Bajo Stock
                             </span>
                           ) : (
                             <span className="inline-flex items-center text-[11px] text-emerald-400 font-mono">
-                              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 mr-1.5" />
+                              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 mr-1.5" aria-hidden="true" />
                               Óptimo
                             </span>
                           )}
@@ -269,10 +271,11 @@ export default function Home() {
                             <button
                               onClick={() => setIsTransferModalOpen(true)}
                               disabled={!item.productoActivo}
+                              aria-label={`Transferir stock de ${item.nombreProducto} (SKU ${item.skuProducto})`}
                               className="px-2.5 py-1 text-zinc-400 hover:text-white hover:bg-zinc-700/80 border border-zinc-700 rounded text-[11px] font-medium transition-colors inline-flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
                               title={!item.productoActivo ? 'Producto inactivo' : 'Transferir'}
                             >
-                              <ArrowRightLeft className="h-3 w-3" />
+                              <ArrowRightLeft className="h-3 w-3" aria-hidden="true" />
                               <span>Transferir</span>
                             </button>
                           </td>
