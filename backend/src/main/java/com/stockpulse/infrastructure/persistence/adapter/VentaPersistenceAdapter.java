@@ -10,6 +10,7 @@ import jakarta.persistence.criteria.Predicate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.domain.Sort;
@@ -29,6 +30,7 @@ public class VentaPersistenceAdapter implements VentaRepository {
     }
 
     @Override
+    @Transactional
     public Venta save(Venta venta) {
         VentaJpaEntity entity = mapper.toEntity(venta);
         VentaJpaEntity savedEntity = repository.save(entity);
@@ -45,6 +47,7 @@ public class VentaPersistenceAdapter implements VentaRepository {
     public List<Venta> findAllBySucursalId(UUID sucursalId) {
         return repository.findAllBySucursalIdOrderByFechaDesc(sucursalId).stream()
             .map(mapper::toDomain)
+            .filter(Objects::nonNull)
             .toList();
     }
 
@@ -59,6 +62,7 @@ public class VentaPersistenceAdapter implements VentaRepository {
             if (productoId != null) {
                 Join<Object, Object> detalles = root.join("detalles");
                 predicates.add(cb.equal(detalles.get("productoId"), productoId));
+                query.distinct(true);
             }
             if (fechaInicio != null) {
                 predicates.add(cb.greaterThanOrEqualTo(root.get("fecha"), fechaInicio));
@@ -70,6 +74,7 @@ public class VentaPersistenceAdapter implements VentaRepository {
         };
         return repository.findAll(spec, Sort.by(Sort.Direction.DESC, "fecha")).stream()
             .map(mapper::toDomain)
+            .filter(Objects::nonNull)
             .toList();
     }
 

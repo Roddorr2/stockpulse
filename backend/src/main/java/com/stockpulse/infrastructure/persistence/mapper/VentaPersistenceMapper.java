@@ -46,6 +46,10 @@ public class VentaPersistenceMapper {
             return null;
         }
 
+        if (entity.getDetalles() == null || entity.getDetalles().isEmpty()) {
+            return null;
+        }
+
         List<DetalleVenta> detalles = entity.getDetalles().stream()
             .map(d -> new DetalleVenta(
                 d.getId(),

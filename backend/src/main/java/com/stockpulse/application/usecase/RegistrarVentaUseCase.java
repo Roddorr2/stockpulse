@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import org.springframework.transaction.annotation.Transactional;
 
 public class RegistrarVentaUseCase {
 
@@ -41,6 +42,7 @@ public class RegistrarVentaUseCase {
         this.eventPublisher = eventPublisher;
     }
 
+    @Transactional
     public VentaResponseDTO ejecutar(RegistrarVentaRequestDTO request) {
         if (request.items() == null || request.items().isEmpty()) {
             throw new IllegalArgumentException("La venta debe contener al menos un producto");
