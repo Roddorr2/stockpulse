@@ -13,7 +13,7 @@ export function AlertToastContainer({ alerts, onDismiss }: AlertToastContainerPr
   if (alerts.length === 0) return null;
 
   return (
-    <div role="region" aria-label="Notificaciones de alertas de stock" className="fixed bottom-6 right-6 z-50 flex flex-col gap-3 max-w-sm w-full">
+    <div role="region" aria-label="Notificaciones de alertas de stock" data-testid="alert-toast-container" className="fixed bottom-6 right-6 z-50 flex flex-col gap-3 max-w-sm w-full">
       {alerts.map((alert, index) => (
         <div
           key={`${alert.productoId}-${alert.timestamp}-${index}`}

@@ -163,7 +163,9 @@ export function ProductFormModal({ isOpen, onClose, onSubmit, initialData }: Pro
               <label htmlFor="product-precio" className="block text-xs font-medium text-zinc-400 mb-1">Precio</label>
               <input
                 id="product-precio"
-                type="text"
+                type="number"
+                step="0.01"
+                min="0"
                 value={formData.precio}
                 onChange={(e) => setFormData({ ...formData, precio: e.target.value })}
                 onBlur={() => handleBlur('precio')}
@@ -177,7 +179,9 @@ export function ProductFormModal({ isOpen, onClose, onSubmit, initialData }: Pro
               <label htmlFor="product-stock-minimo" className="block text-xs font-medium text-zinc-400 mb-1">Stock Mínimo</label>
               <input
                 id="product-stock-minimo"
-                type="text"
+                type="number"
+                step="1"
+                min="0"
                 value={formData.stockMinimo}
                 onChange={(e) => setFormData({ ...formData, stockMinimo: e.target.value })}
                 onBlur={() => handleBlur('stockMinimo')}
