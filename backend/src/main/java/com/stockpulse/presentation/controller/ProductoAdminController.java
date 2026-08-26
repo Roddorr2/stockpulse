@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
+import com.stockpulse.application.usecase.ConsultarProductosUseCase;
 
 @RestController
 @RequestMapping("/api/v1/admin/products")
@@ -18,9 +20,19 @@ import org.springframework.web.bind.annotation.*;
 public class ProductoAdminController {
 
     private final GestionarProductoUseCase gestionarProductoUseCase;
+    private final ConsultarProductosUseCase consultarProductosUseCase;
 
-    public ProductoAdminController(GestionarProductoUseCase gestionarProductoUseCase) {
+    public ProductoAdminController(GestionarProductoUseCase gestionarProductoUseCase,
+                                   ConsultarProductosUseCase consultarProductosUseCase) {
         this.gestionarProductoUseCase = gestionarProductoUseCase;
+        this.consultarProductosUseCase = consultarProductosUseCase;
+    }
+
+    @Operation(summary = "Obtener todos los productos (activos e inactivos)")
+    @GetMapping
+    public ResponseEntity<List<Producto>> obtenerTodosLosProductos(
+            @RequestParam(required = false) String q) {
+        return ResponseEntity.ok(consultarProductosUseCase.ejecutar(q, false));
     }
 
     @Operation(summary = "Crear un nuevo producto")

@@ -14,4 +14,11 @@ public interface SpringDataProductoRepository extends JpaRepository<ProductoJpaE
            "LOWER(p.sku) LIKE LOWER(CONCAT('%', :keyword, '%'))")
     List<ProductoJpaEntity> searchByKeyword(@Param("keyword") String keyword);
     
+    List<ProductoJpaEntity> findByActivoTrue();
+    
+    @Query("SELECT p FROM ProductoJpaEntity p WHERE p.activo = true AND (" +
+           "LOWER(p.nombre) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+           "LOWER(p.sku) LIKE LOWER(CONCAT('%', :keyword, '%')))")
+    List<ProductoJpaEntity> searchByKeywordAndActivoTrue(@Param("keyword") String keyword);
+    
 }

@@ -58,7 +58,8 @@ export function RegisterSaleModal({ isOpen, onClose, onSuccess }: RegisterSaleMo
         fetchApi<StockItem[]>('/stock').catch(() => []),
       ])
         .then(([prodsData, branchesData, stockData]) => {
-          setProductos(prodsData);
+          const activeProducts = prodsData.filter(p => p.activo);
+          setProductos(activeProducts);
           setSucursales(branchesData);
           setStockMatrix(stockData);
 

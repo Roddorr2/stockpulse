@@ -38,8 +38,8 @@ export default function AdminProductsPage() {
   const fetchProducts = useCallback(async () => {
     try {
       const url = searchQuery 
-        ? `/api/v1/products?q=${encodeURIComponent(searchQuery)}`
-        : '/api/v1/products';
+        ? `/api/v1/admin/products?q=${encodeURIComponent(searchQuery)}`
+        : '/api/v1/admin/products';
       const data = await fetchApi<Product[]>(url);
       setProducts(data);
     } catch (error) {

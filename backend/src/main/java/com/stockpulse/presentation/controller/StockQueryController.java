@@ -4,9 +4,7 @@ import com.stockpulse.application.dto.ReporteStockTotalDTO;
 import com.stockpulse.application.dto.StockResponseDTO;
 import com.stockpulse.application.usecase.GenerarReporteStockUseCase;
 import com.stockpulse.application.usecase.ObtenerMatrizStockUseCase;
-import com.stockpulse.infrastructure.persistence.entity.ProductoJpaEntity;
 import com.stockpulse.infrastructure.persistence.entity.SucursalJpaEntity;
-import com.stockpulse.infrastructure.persistence.repository.SpringDataProductoRepository;
 import com.stockpulse.infrastructure.persistence.repository.SpringDataSucursalRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -19,6 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.stockpulse.application.usecase.ConsultarProductosUseCase;
+import com.stockpulse.domain.model.Producto;
+
 @RestController
 @RequestMapping("/api/v1")
 @Tag(name = "Consultas de Inventario y Catálogo", description = "Endpoints para obtener la matriz de existencias, productos y sucursales")
@@ -26,16 +27,16 @@ public class StockQueryController {
 
     private final ObtenerMatrizStockUseCase obtenerMatrizStockUseCase;
     private final GenerarReporteStockUseCase generarReporteStockUseCase;
-    private final SpringDataProductoRepository productoRepository;
+    private final ConsultarProductosUseCase consultarProductosUseCase;
     private final SpringDataSucursalRepository sucursalRepository;
 
     public StockQueryController(ObtenerMatrizStockUseCase obtenerMatrizStockUseCase,
                                 GenerarReporteStockUseCase generarReporteStockUseCase,
-                                SpringDataProductoRepository productoRepository,
+                                ConsultarProductosUseCase consultarProductosUseCase,
                                 SpringDataSucursalRepository sucursalRepository) {
         this.obtenerMatrizStockUseCase = obtenerMatrizStockUseCase;
         this.generarReporteStockUseCase = generarReporteStockUseCase;
-        this.productoRepository = productoRepository;
+        this.consultarProductosUseCase = consultarProductosUseCase;
         this.sucursalRepository = sucursalRepository;
     }
 
@@ -53,14 +54,11 @@ public class StockQueryController {
         return ResponseEntity.ok(generarReporteStockUseCase.ejecutar(sucursalId));
     }
 
-    @Operation(summary = "Obtener lista de productos del catálogo")
+    @Operation(summary = "Obtener lista de productos del catálogo (solo activos)")
     @GetMapping("/products")
-    public ResponseEntity<List<ProductoJpaEntity>> obtenerProductos(
+    public ResponseEntity<List<Producto>> obtenerProductos(
             @RequestParam(required = false) String q) {
-        if (q != null && !q.trim().isEmpty()) {
-            return ResponseEntity.ok(productoRepository.searchByKeyword(q));
-        }
-        return ResponseEntity.ok(productoRepository.findAll());
+        return ResponseEntity.ok(consultarProductosUseCase.ejecutar(q, true));
     }
 
     @Operation(summary = "Obtener lista de sucursales activas")

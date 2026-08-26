@@ -32,4 +32,24 @@ public class ProductoPersistenceAdapter implements ProductoRepository {
         return mapper.toDomain(savedEntity);
     }
 
+    @Override
+    public java.util.List<Producto> findAll() {
+        return repository.findAll().stream().map(mapper::toDomain).toList();
+    }
+
+    @Override
+    public java.util.List<Producto> searchByKeyword(String keyword) {
+        return repository.searchByKeyword(keyword).stream().map(mapper::toDomain).toList();
+    }
+
+    @Override
+    public java.util.List<Producto> findByActivoTrue() {
+        return repository.findByActivoTrue().stream().map(mapper::toDomain).toList();
+    }
+
+    @Override
+    public java.util.List<Producto> searchByKeywordAndActivoTrue(String keyword) {
+        return repository.searchByKeywordAndActivoTrue(keyword).stream().map(mapper::toDomain).toList();
+    }
+
 }
