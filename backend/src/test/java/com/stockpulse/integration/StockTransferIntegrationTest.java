@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -76,6 +77,9 @@ class StockTransferIntegrationTest {
     @Autowired
     private SpringDataVentaRepository ventaRepository;
 
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
     private UUID productoId;
     private UUID sucursalOrigenId;
     private UUID sucursalDestinoId;
@@ -83,11 +87,7 @@ class StockTransferIntegrationTest {
 
     @BeforeEach
     void setUp() {
-        stockRepository.deleteAll();
-        transferenciaStockRepository.deleteAll();
-        ventaRepository.deleteAll();
-        productoRepository.deleteAll();
-        sucursalRepository.deleteAll();
+        jdbcTemplate.execute("TRUNCATE TABLE detalle_ventas, transferencias_stock, ventas, stocks, productos, sucursales CASCADE");
 
         productoId = UUID.randomUUID();
         sucursalOrigenId = UUID.randomUUID();
