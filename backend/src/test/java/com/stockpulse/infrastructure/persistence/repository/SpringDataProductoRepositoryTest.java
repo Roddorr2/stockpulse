@@ -42,8 +42,20 @@ class SpringDataProductoRepositoryTest {
     @Autowired
     private SpringDataProductoRepository repository;
 
+    @Autowired
+    private SpringDataStockRepository stockRepository;
+
+    @Autowired
+    private SpringDataTransferenciaStockRepository transferenciaStockRepository;
+
+    @Autowired
+    private SpringDataVentaRepository ventaRepository;
+
     @BeforeEach
     void setUp() {
+        stockRepository.deleteAll();
+        transferenciaStockRepository.deleteAll();
+        ventaRepository.deleteAll();
         repository.deleteAll();
     }
 
